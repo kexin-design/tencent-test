@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="信用卡还款规划体验设计演示：先看清成本，再决定是否分期。" />
+  <title>还款规划｜体验设计 Demo</title>
+  <style>
+    :root {
+      --bg: #f3f6f3;
+      --paper: #fcfdfc;
+      --ink: #17211d;
+      --muted: #68746e;
+      --line: #dfe7e1;
+      --line-strong: #cbd8ce;
+      --accent: #147a64;
+      --accent-deep: #0d5d4c;
+      --accent-soft: #e2f1eb;
+      --warning-soft: #f8f0e6;
+      --warning: #99602c;
+      --shadow: 0 16px 48px rgba(24, 51, 40, .08), 0 2px 8px rgba(24, 51, 40, .04);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "SF Pro Display", "SF Pro Text", "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid rgba(20, 122, 100, .28); outline-offset: 3px; }
+    .mono, .amount, .metric-value { font-variant-numeric: tabular-nums; }
+    .shell { width: min(1200px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      height: 76px;
+      border-bottom: 1px solid rgba(203, 216, 206, .72);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 760; letter-spacing: -.02em; }
+    .brand-mark { width: 32px; height: 32px; border-radius: 10px; background: var(--ink); display: grid; place-items: center; color: #fff; }
+    .brand-mark svg { width: 17px; height: 17px; }
+    .account-chip { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+
+    .hero { padding: 72px 0 48px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(360px, .92fr); gap: 62px; align-items: end; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .15em; font-size: 11px; font-weight: 800; }
+    h1 { margin: 15px 0 18px; max-width: 650px; font-size: clamp(42px, 6vw, 76px); line-height: .98; letter-spacing: -.075em; font-weight: 760; }
+    .hero-copy { max-width: 580px; color: var(--muted); font-size: 17px; line-height: 1.7; }
+    .hero-actions { margin-top: 30px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .btn { border: 1px solid transparent; border-radius: 999px; min-height: 46px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: transform .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0) scale(.98); }
+    .btn-primary { color: #fff; background: var(--accent); box-shadow: 0 8px 20px rgba(20, 122, 100, .18); }
+    .btn-primary:hover { background: var(--accent-deep); }
+    .btn-quiet { color: var(--ink); background: transparent; border-color: var(--line-strong); }
+    .btn-quiet:hover { background: #fff; border-color: var(--ink); }
+    .trust-line { margin-top: 22px; color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+    .trust-line svg { color: var(--accent); width: 15px; height: 15px; flex: none; }
+
+    .insight-card { position: relative; overflow: hidden; border: 1px solid var(--line); background: var(--paper); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 26px; }
+    .insight-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--accent); }
+    .insight-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .insight-label { display: inline-flex; gap: 7px; align-items: center; font-size: 12px; color: var(--accent-deep); font-weight: 800; }
+    .spark { width: 17px; height: 17px; border-radius: 6px; background: var(--accent-soft); display: grid; place-items: center; }
+    .spark svg { width: 11px; height: 11px; }
+    .micro-copy { color: var(--muted); font-size: 12px; }
+    .insight-title { margin: 22px 0 10px; font-size: 23px; line-height: 1.25; letter-spacing: -.04em; }
+    .insight-body { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0; }
+    .insight-foot { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 18px; align-items: end; }
+    .insight-foot strong { font-size: 24px; letter-spacing: -.04em; }
+    .insight-foot span { display: block; margin-top: 5px; font-size: 12px; color: var(--muted); }
+
+    .section { padding: 26px 0 88px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 20px; }
+    .section-heading h2 { margin: 0; font-size: 30px; letter-spacing: -.05em; }
+    .section-heading p { margin: 0; max-width: 430px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .workspace { display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); gap: 18px; align-items: start; }
+    .panel { border: 1px solid var(--line); background: rgba(252, 253, 252, .88); border-radius: var(--radius-lg); box-shadow: 0 8px 26px rgba(24, 51, 40, .04); }
+    .bill-panel { padding: 24px; position: sticky; top: 22px; }
+    .panel-kicker { color: var(--muted); font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .bank-tag { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-weight: 700; }
+    .bank-logo { width: 25px; height: 25px; border-radius: 8px; background: #f0e2ca; color: #8b592a; display: grid; place-items: center; font-size: 11px; font-weight: 900; }
+    .bill-title { margin: 28px 0 5px; color: var(--muted); font-size: 13px; }
+    .bill-total { font-size: 45px; line-height: 1; letter-spacing: -.06em; font-weight: 760; }
+    .bill-total small { margin-left: 3px; font-size: 15px; color: var(--muted); letter-spacing: 0; font-weight: 600; }
+    .bill-date { margin-top: 10px; color: var(--muted); font-size: 12px; }
+    .bill-breakdown { margin: 28px 0 0; border-top: 1px solid var(--line); }
+    .breakdown-row { display: flex; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .breakdown-row span:first-child { color: var(--muted); }
+    .breakdown-row span:last-child { font-weight: 700; }
+    .bill-note { margin-top: 18px; padding: 13px 14px; border-radius: var(--radius-sm); background: var(--accent-soft); color: var(--accent-deep); font-size: 12px; line-height: 1.55; }
+    .sync-button { width: 100%; margin-top: 20px; }
+    .sync-state { min-height: 18px; margin-top: 11px; color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 7px; }
+    .sync-state.success { color: var(--accent-deep); }
+    .sync-state.error { color: var(--warning); }
+
+    .plan-panel { padding: 24px; }
+    .plan-head { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+    .plan-head h3 { margin: 0; font-size: 22px; letter-spacing: -.04em; }
+    .plan-head p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .demo-badge { padding: 7px 10px; border-radius: 999px; background: #eef2ee; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .plan-layout { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr); gap: 12px; }
+    .plan-card { position: relative; min-height: 214px; border: 1px solid var(--line); border-radius: 22px; background: #fff; padding: 20px; text-align: left; transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease, background-color .22s ease; }
+    .plan-card:hover { transform: translateY(-2px); border-color: var(--line-strong); box-shadow: 0 12px 28px rgba(24, 51, 40, .07); }
+    .plan-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft), 0 12px 28px rgba(20, 122, 100, .1); }
+    .plan-card.recommended { min-height: 300px; background: #f0f8f3; }
+    .side-plans { display: grid; gap: 12px; }
+    .side-plans .plan-card { min-height: 144px; }
+    .plan-topline { display: flex; justify-content: space-between; align-items: center; gap: 9px; }
+    .plan-name { font-size: 13px; font-weight: 800; }
+    .plan-tag { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .03em; }
+    .plan-card:not(.recommended) .plan-tag { background: #edf0ed; color: var(--muted); }
+    .plan-amount { margin-top: 25px; font-size: 41px; line-height: 1; letter-spacing: -.065em; font-weight: 760; }
+    .side-plans .plan-amount { margin-top: 18px; font-size: 28px; }
+    .plan-amount small { margin-left: 3px; font-size: 12px; color: var(--muted); letter-spacing: 0; font-weight: 600; }
+    .plan-description { margin: 9px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .plan-meta { position: absolute; left: 20px; right: 20px; bottom: 18px; display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 11px; }
+    .plan-meta strong { color: var(--ink); }
+    .chosen-mark { position: absolute; top: 18px; right: 18px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-strong); display: grid; place-items: center; color: transparent; }
+    .plan-card[aria-pressed="true"] .chosen-mark { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .chosen-mark svg { width: 12px; height: 12px; }
+    .plan-footnote { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .plan-footnote button { color: var(--accent-deep); border: 0; padding: 0; background: transparent; text-decoration: underline; text-underline-offset: 3px; }
+
+    .comparison { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff; }
+    .metric { padding: 16px 14px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric-label { color: var(--muted); font-size: 11px; }
+    .metric-value { margin-top: 7px; font-size: 16px; font-weight: 760; letter-spacing: -.03em; }
+    .metric-value.positive { color: var(--accent-deep); }
+
+    .aftercare { margin-top: 18px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .ai-explain, .faq-panel { padding: 23px; }
+    .ai-explain { background: var(--ink); color: #f2f7f3; border-radius: var(--radius-lg); }
+    .ai-explain .panel-kicker { color: #a9bbb1; }
+    .ai-explain h3 { margin: 15px 0 8px; font-size: 23px; letter-spacing: -.05em; }
+    .ai-explain p { margin: 0; color: #bdc9c1; line-height: 1.7; font-size: 13px; }
+    .ai-points { margin: 20px 0 0; display: grid; gap: 11px; }
+    .ai-point { display: flex; gap: 10px; align-items: start; font-size: 12px; color: #dce7e0; line-height: 1.55; }
+    .ai-point svg { flex: none; margin-top: 1px; color: #91d1ba; width: 15px; height: 15px; }
+    .faq-panel { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper); }
+    .faq-panel h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.04em; }
+    .faq-panel > p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    details { border-top: 1px solid var(--line); }
+    summary { list-style: none; padding: 14px 0; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 13px; font-weight: 700; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--muted); font-size: 18px; line-height: 1; }
+    details[open] summary::after { content: "−"; }
+    details p { margin: -2px 0 14px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+
+    .state-panel { margin-top: 18px; padding: 16px; border-radius: 16px; border: 1px dashed var(--line-strong); background: #fafcfb; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .state-panel strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 13px; }
+    .is-hidden { display: none !important; }
+    .skeleton { display: inline-block; height: 13px; width: 120px; border-radius: 999px; background: linear-gradient(90deg, #e7ece8 25%, #f5f8f5 45%, #e7ece8 65%); background-size: 300% 100%; animation: shimmer 1.1s infinite; }
+    .skeleton.wide { width: 190px; }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+    @keyframes breathe { 0%, 100% { opacity: .65; } 50% { opacity: 1; } }
+    .breathe { animation: breathe 2.5s ease-in-out infinite; }
+
+    .sticky-action { position: sticky; bottom: 0; z-index: 5; margin-top: 28px; padding: 13px 16px 13px 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(252, 253, 252, .92); box-shadow: 0 -10px 28px rgba(24, 51, 40, .08); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .sticky-label { color: var(--muted); font-size: 12px; }
+    .sticky-label strong { display: block; margin-top: 4px; color: var(--ink); font-size: 15px; }
+    .sticky-total { color: var(--muted); font-size: 12px; text-align: right; }
+    .sticky-total strong { display: block; color: var(--ink); font-size: 20px; letter-spacing: -.04em; }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 20; background: rgba(23, 33, 29, .46); display: grid; place-items: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+    .modal { width: min(470px, 100%); border-radius: 24px; border: 1px solid var(--line); background: var(--paper); box-shadow: 0 24px 80px rgba(12, 27, 20, .22); padding: 24px; transform: translateY(10px) scale(.98); transition: transform .22s ease; }
+    .modal-backdrop.is-open .modal { transform: translateY(0) scale(1); }
+    .modal h3 { margin: 0; font-size: 24px; letter-spacing: -.05em; }
+    .modal p { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .confirm-summary { margin-top: 18px; padding: 16px; border-radius: 16px; background: #f0f5f1; }
+    .confirm-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 8px 0; }
+    .confirm-row span:first-child { color: var(--muted); }
+    .confirm-row strong { font-weight: 760; }
+    .consent { margin-top: 16px; display: flex; align-items: start; gap: 9px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .consent input { margin-top: 2px; accent-color: var(--accent); }
+    .modal-actions { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; }
+    .success-state { text-align: center; padding: 18px 8px 8px; }
+    .success-icon { width: 52px; height: 52px; margin: 0 auto 15px; border-radius: 17px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+    .success-icon svg { width: 25px; height: 25px; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 30px; padding-top: 52px; }
+      h1 { max-width: 720px; }
+      .workspace { grid-template-columns: 1fr; }
+      .bill-panel { position: static; }
+      .aftercare { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 28px, 1200px); }
+      .topbar { height: 66px; }
+      .account-chip { font-size: 11px; }
+      .hero { padding: 44px 0 30px; }
+      h1 { font-size: clamp(42px, 15vw, 64px); }
+      .hero-copy { font-size: 15px; }
+      .section { padding-bottom: 58px; }
+      .section-heading { display: block; }
+      .section-heading p { margin-top: 9px; }
+      .plan-layout { grid-template-columns: 1fr; }
+      .recommended { min-height: 260px !important; }
+      .comparison { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .sticky-action { align-items: center; padding-left: 14px; }
+      .sticky-action .btn { padding: 0 15px; }
+      .sticky-total { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar shell" aria-label="页面导航">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V7l6-3 6 3v10l-6 3-6-3Z"/><path d="m6 7 6 3 6-3M12 10v10"/></svg>
+      </span>
+      <span>还款规划</span>
+    </div>
+    <div class="account-chip"><span class="status-dot" aria-hidden="true"></span>交通银行 · 账户已同步</div>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div>
+        <div class="eyebrow">信用卡 · 还款规划</div>
+        <h1>这次还款，<br />先看清再决定。</h1>
+        <p class="hero-copy">把“要不要分期”的压力，变成一眼能比较的选择。系统结合本期账单、银行规则和可用贴息，先把每种安排的月供、总成本与灵活度讲明白。</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="scrollToPlans">查看三种安排 <span aria-hidden="true">↓</span></button>
+          <button class="btn btn-quiet" id="showMethod">这条建议怎么来的</button>
+        </div>
+        <div class="trust-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+          数据由交通银行提供 · 分期需以银行最终审批结果为准
+        </div>
+      </div>
+
+      <aside class="insight-card" aria-label="智能建议">
+        <div class="insight-head">
+          <div class="insight-label"><span class="spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 16 .8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></svg></span>智能建议</div>
+          <span class="micro-copy">刚刚更新</span>
+        </div>
+        <h2 class="insight-title">先留出安全垫，再决定月供。</h2>
+        <p class="insight-body">你本期需要处理的账单为 <strong class="mono">¥2,148.25</strong>。如果希望降低本月压力，6 期是成本与月供之间更平衡的安排；全额还款始终是成本最低的选项。</p>
+        <div class="insight-foot">
+          <div><strong class="mono">¥374.08</strong><span>6 期预计月供</span></div>
+          <div style="text-align:right"><strong class="mono">¥96.23</strong><span>预计分期成本（贴息后）</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section shell" id="plans">
+      <div class="section-heading">
+        <div><div class="eyebrow">01 / 先把账单讲清楚</div><h2>你可以怎么安排？</h2></div>
+        <p>三种方案都把关键数字放在同一层级：每月要付多少、最后多付多少，以及提前还款时需要注意什么。</p>
+      </div>
+
+      <div class="workspace">
+        <aside class="panel bill-panel" aria-label="账单信息">
+          <div class="panel-kicker"><span class="bank-tag"><span class="bank-logo">交</span>交通银行信用卡</span><span class="mono">尾号 3918</span></div>
+          <div class="bill-title">本期应还</div>
+          <div class="bill-total amount">¥2,148.25<small>人民币</small></div>
+          <div class="bill-date">还款日 06 月 28 日 · 距今天 12 天</div>
+          <div class="bill-breakdown">
+            <div class="breakdown-row"><span>本期已出账单</span><span class="mono">¥2,136.85</span></div>
+            <div class="breakdown-row"><span>未出账消费</span><span class="mono">¥812.24</span></div>
+            <div class="breakdown-row"><span>最低还款额</span><span class="mono">¥214.83</span></div>
+          </div>
+          <div class="bill-note">分期金额只包含本期已出账单。未出账消费不会被自动计入，避免“为什么金额变多了”的误解。</div>
+          <button class="btn btn-quiet sync-button" id="syncButton">查询本行分期资格</button>
+          <div class="sync-state" id="syncState" aria-live="polite"><span class="status-dot" aria-hidden="true"></span>资格已初步匹配，可继续比较方案</div>
+          <div class="state-panel is-hidden" id="emptyState"><strong>当前没有可分期账单</strong>本期账单可能已超过申请时间，或不满足银行分期条件。你仍然可以直接全额还款。</div>
+          <div class="state-panel is-hidden" id="errorState"><strong>资格查询暂时失败</strong>银行服务响应较慢，请稍后重试；在此期间，已展示的示例方案不会提交任何申请。</div>
+        </aside>
+
+        <div class="panel plan-panel">
+          <div class="plan-head">
+            <div><h3>三种还款安排</h3><p>选择你的优先级：成本最低、月供平衡，或尽量降低当月支出。</p></div>
+            <span class="demo-badge">示例数据</span>
+          </div>
+
+          <div class="plan-layout" role="group" aria-label="还款方案选择">
+            <button class="plan-card recommended" data-plan="six" aria-pressed="true">
+              <div class="plan-topline"><span class="plan-name">6 期 · 灵活平衡</span><span class="plan-tag">更适合多数人</span></div>
+              <div class="plan-amount amount" data-monthly>¥374.08<small>/ 月</small></div>
+              <p class="plan-description">把本月支出摊薄，同时把额外成本控制在可感知范围内。</p>
+              <div class="plan-meta"><span>预计总成本 <strong class="mono" data-total>¥2,244.48</strong></span><span>年化利率 <strong>7.80%</strong></span></div>
+              <span class="chosen-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></span>
+            </button>
+            <div class="side-plans">
+              <button class="plan-card" data-plan="full" aria-pressed="false">
+                <div class="plan-topline"><span class="plan-name">全额还款 · 成本最低</span><span class="plan-tag">无分期费</span></div>
+                <div class="plan-amount amount" data-monthly>¥2,148.25<small>/ 次</small></div>
+                <p class="plan-description">一次结清，不产生分期费用。</p>
+                <div class="plan-meta"><span>总成本 <strong class="mono" data-total>¥2,148.25</strong></span><span>最快结清</span></div>
+                <span class="chosen-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></span>
+              </button>
+              <button class="plan-card" data-plan="twelve" aria-pressed="false">
+                <div class="plan-topline"><span class="plan-name">12 期 · 稳住现金流</span><span class="plan-tag">月供更低</span></div>
+                <div class="plan-amount amount" data-monthly>¥191.80<small>/ 月</small></div>
+                <p class="plan-description">降低当月压力，但总成本和周期会更高。</p>
+                <div class="plan-meta"><span>预计总成本 <strong class="mono" data-total>¥2,301.60</strong></span><span>12 个月</span></div>
+                <span class="chosen-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="comparison" aria-label="方案细节比较">
+            <div class="metric"><div class="metric-label">当前选择</div><div class="metric-value" id="metricPlan">6 期</div></div>
+            <div class="metric"><div class="metric-label">预计月供</div><div class="metric-value" id="metricMonthly">¥374.08</div></div>
+            <div class="metric"><div class="metric-label">预计额外成本</div><div class="metric-value" id="metricFee">¥96.23</div></div>
+            <div class="metric"><div class="metric-label">贴息后节省</div><div class="metric-value positive" id="metricSubsidy">¥21.48</div></div>
+          </div>
+          <p class="plan-footnote">费用、贴息和提前结清规则以交通银行最终页面为准。<button id="showRules">查看费用与规则说明</button></p>
+        </div>
+      </div>
+
+      <div class="aftercare">
+        <article class="ai-explain" id="methodPanel">
+          <div class="panel-kicker"><span>02 / 为什么推荐 6 期</span><span class="micro-copy">可解释建议</span></div>
+          <h3>不是替你决定，是把取舍摆在台面上。</h3>
+          <p>建议由三个信号共同得出：本期账单金额、你选择的月供压力，以及银行当前可用的贴息。系统不会因为“分期转化”而隐藏全额还款。</p>
+          <div class="ai-points">
+            <div class="ai-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16V8m5 8V5m5 11v-6m5 6V3"/></svg><span>6 期把月供从 ¥2,148.25 降到 ¥374.08，保留日常现金流余量。</span></div>
+            <div class="ai-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg><span>贴息预计抵扣 ¥21.48，分期成本会在确认页再次展示。</span></div>
+            <div class="ai-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg><span>如果你有充足余额，全额还款仍是总成本最低的选择。</span></div>
+          </div>
+        </article>
+        <article class="faq-panel">
+          <h3>确认前，先回答三个问题</h3>
+          <p>把金融产品里最容易被忽略的规则，放在决策发生之前。</p>
+          <details open><summary>提前还款会怎样？</summary><p>不同银行的剩余手续费处理方式不同。确认前会跳转交通银行官方规则页，不会在平台内默认勾选提前结清。</p></details>
+          <details><summary>贴息会自动到账吗？</summary><p>符合活动条件时，贴息会按银行活动规则抵扣或返还。演示中的金额仅用于帮助比较，不代表最终入账金额。</p></details>
+          <details><summary>为什么未出账消费没有被算进去？</summary><p>为了避免账单金额突然变化，本方案只对本期已出账单进行计算；新消费会进入下一期账单。</p></details>
+        </article>
+      </div>
+
+      <div class="sticky-action" aria-label="确认操作栏">
+        <div class="sticky-label">当前选择<strong id="stickyPlan">6 期 · 灵活平衡</strong></div>
+        <div class="sticky-total"><strong id="stickyTotal">¥2,244.48</strong>预计总成本</div>
+        <button class="btn btn-primary" id="continueButton">继续确认 <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div id="confirmContent">
+        <h3 id="modalTitle">确认这份还款安排</h3>
+        <p>下一步将前往交通银行官方服务完成申请。平台不会代替银行审批，也不会在未确认前提交分期。</p>
+        <div class="confirm-summary">
+          <div class="confirm-row"><span>还款安排</span><strong id="confirmPlan">6 期 · 灵活平衡</strong></div>
+          <div class="confirm-row"><span>预计每月</span><strong id="confirmMonthly">¥374.08</strong></div>
+          <div class="confirm-row"><span>预计总成本</span><strong id="confirmTotal">¥2,244.48</strong></div>
+        </div>
+        <label class="consent"><input id="consentInput" type="checkbox" /> <span>我已阅读费用、贴息和提前结清规则，理解最终金额以交通银行官方页面为准。</span></label>
+        <div class="modal-actions"><button class="btn btn-quiet" id="closeModal">返回修改</button><button class="btn btn-primary" id="confirmButton" disabled>前往官方服务</button></div>
+      </div>
+      <div class="success-state is-hidden" id="successContent">
+        <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></div>
+        <h3>已准备好前往官方服务</h3>
+        <p>这一步没有提交真实申请。Demo 用它演示“先解释、再确认、最后交给银行”的交接体验。</p>
+        <div class="modal-actions"><button class="btn btn-primary" id="doneButton">返回方案页</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const plans = {
+      full: { label: '全额还款 · 成本最低', short: '全额还款', monthly: '¥2,148.25', total: '¥2,148.25', fee: '¥0', subsidy: '¥0' },
+      six: { label: '6 期 · 灵活平衡', short: '6 期', monthly: '¥374.08', total: '¥2,244.48', fee: '¥96.23', subsidy: '¥21.48' },
+      twelve: { label: '12 期 · 稳住现金流', short: '12 期', monthly: '¥191.80', total: '¥2,301.60', fee: '¥153.35', subsidy: '¥21.48' }
+    };
+    let selected = 'six';
+    const planCards = [...document.querySelectorAll('[data-plan]')];
+    const $ = (id) => document.getElementById(id);
+
+    function selectPlan(key) {
+      selected = key;
+      const plan = plans[key];
+      planCards.forEach((card) => card.setAttribute('aria-pressed', card.dataset.plan === key ? 'true' : 'false'));
+      $('metricPlan').textContent = plan.short;
+      $('metricMonthly').textContent = plan.monthly;
+      $('metricFee').textContent = plan.fee;
+      $('metricSubsidy').textContent = plan.subsidy;
+      $('stickyPlan').textContent = plan.label;
+      $('stickyTotal').textContent = plan.total;
+      $('confirmPlan').textContent = plan.label;
+      $('confirmMonthly').textContent = plan.monthly;
+      $('confirmTotal').textContent = plan.total;
+    }
+
+    planCards.forEach((card) => card.addEventListener('click', () => selectPlan(card.dataset.plan)));
+    $('scrollToPlans').addEventListener('click', () => $('plans').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    $('showMethod').addEventListener('click', () => $('methodPanel').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    $('showRules').addEventListener('click', () => document.querySelector('.faq-panel details').open = true);
+
+    let queryCount = 0;
+    $('syncButton').addEventListener('click', () => {
+      const button = $('syncButton');
+      const state = $('syncState');
+      queryCount += 1;
+      button.disabled = true;
+      button.innerHTML = '<span class="skeleton wide" aria-hidden="true"></span>';
+      state.className = 'sync-state breathe';
+      state.innerHTML = '<span class="skeleton" aria-hidden="true"></span>';
+      $('errorState').classList.add('is-hidden');
+      window.setTimeout(() => {
+        button.disabled = false;
+        button.textContent = '重新查询分期资格';
+        if (queryCount % 2 === 0) {
+          state.className = 'sync-state error';
+          state.innerHTML = '查询超时，请稍后重试；已展示的方案不会提交申请';
+          $('errorState').classList.remove('is-hidden');
+        } else {
+          state.className = 'sync-state success';
+          state.innerHTML = '<span class="status-dot" aria-hidden="true"></span>查询完成：当前方案可继续申请';
+        }
+      }, 1100);
+    });
+
+    function openModal() {
+      $('confirmModal').classList.add('is-open');
+      $('confirmContent').classList.remove('is-hidden');
+      $('successContent').classList.add('is-hidden');
+      $('consentInput').checked = false;
+      $('confirmButton').disabled = true;
+      $('confirmModal').querySelector('button').focus();
+    }
+    function closeModal() { $('confirmModal').classList.remove('is-open'); }
+    $('continueButton').addEventListener('click', openModal);
+    $('closeModal').addEventListener('click', closeModal);
+    $('confirmModal').addEventListener('click', (event) => { if (event.target === $('confirmModal')) closeModal(); });
+    $('consentInput').addEventListener('change', (event) => { $('confirmButton').disabled = !event.target.checked; });
+    $('confirmButton').addEventListener('click', () => { $('confirmContent').classList.add('is-hidden'); $('successContent').classList.remove('is-hidden'); });
+    $('doneButton').addEventListener('click', closeModal);
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
+
+    selectPlan(selected);
+  </script>
+</body>
+</html>

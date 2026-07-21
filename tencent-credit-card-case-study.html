@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="腾讯金融科技信用卡还款体验设计案例研究" />
+  <title>信用卡还款体验设计｜腾讯金融科技</title>
+  <style>
+    :root {
+      --ink: #242424;
+      --muted: #9b9b9b;
+      --soft: #c7c7c7;
+      --line: #e7e7e7;
+      --bg: #ffffff;
+      --pink: #f7c4d9;
+      --blue: #168cff;
+      --max: 1392px;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "PingFang SC", "PingFang TC", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    p, h1, h2, h3, ul, figure { margin: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+
+    .site-hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 86px 62px 78px;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 128px;
+      border-bottom: 1px solid var(--line);
+    }
+    .site-hero-inner { grid-column: 2; }
+    .site-hero h1 {
+      max-width: 860px;
+      margin-top: 25px;
+      color: #242424;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-size: clamp(48px, 6vw, 86px);
+      font-weight: 400;
+      letter-spacing: -.07em;
+      line-height: 1.02;
+      text-wrap: balance;
+    }
+    .site-hero-author { margin-top: 28px; color: #555; font-size: 20px; letter-spacing: -.02em; }
+    .site-hero-meta { margin-top: 38px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+    .page {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 128px 62px 0;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 128px;
+    }
+    .toc {
+      position: sticky;
+      top: 124px;
+      align-self: start;
+      border-left: 2px solid #ededed;
+    }
+    .toc a {
+      position: relative;
+      display: block;
+      padding: 0 0 0 19px;
+      margin: 0 0 17px;
+      color: #b1b1b1;
+      font-size: 16px;
+      line-height: 1.25;
+      text-decoration: none;
+      transition: color 180ms ease-out, transform 180ms ease-out;
+    }
+    .toc a::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -2px;
+      width: 2px;
+      height: 100%;
+      background: transparent;
+      transition: background 180ms ease-out;
+    }
+    .toc a.active { color: var(--ink); font-weight: 600; transform: translateX(1px); }
+    .toc a.active::before { background: var(--ink); }
+
+    .content { min-width: 0; max-width: 1065px; }
+    .eyebrow, .label, .caption, .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .hero { padding-bottom: 94px; }
+    .hero h1 {
+      max-width: 850px;
+      margin: 34px 0 26px;
+      color: #242424;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-size: clamp(44px, 4.3vw, 62px);
+      font-weight: 400;
+      letter-spacing: -.055em;
+      line-height: 1.05;
+      text-wrap: balance;
+    }
+    .hero-intro {
+      max-width: 1000px;
+      color: #333333;
+      font-size: 20px;
+      line-height: 1.7;
+      letter-spacing: -.025em;
+    }
+    .highlight {
+      padding: 0 .13em;
+      background: var(--pink);
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 38px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+    .meta-value { margin-top: 11px; color: #4a4a4a; font-size: 17px; }
+
+    .image-figure { margin-top: 43px; }
+    .image-placeholder {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 470px;
+      overflow: hidden;
+      border-radius: 13px;
+      background: #eeeeee;
+    }
+    .image-placeholder::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .34;
+      background: none;
+      transform: translateX(-120%);
+      transition: none;
+    }
+    .image-placeholder:hover::after { transform: translateX(120%); }
+    .image-placeholder.small { min-height: 270px; border-radius: 10px; }
+    .case-image { display: block; width: 100%; height: auto; border-radius: 13px; background: #eeeeee; cursor: zoom-in; transition: transform 180ms ease-out, box-shadow 180ms ease-out; }
+    .case-image:hover { transform: translateY(-2px); box-shadow: 0 14px 35px rgba(0,0,0,.1); }
+    .lightbox { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 28px; background: rgba(20,20,20,.82); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 180ms ease-out, visibility 180ms ease-out; }
+    .lightbox.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+    .lightbox img { display: block; max-width: min(94vw, 1500px); max-height: 92vh; width: auto; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 24px 80px rgba(0,0,0,.35); }
+    .lightbox-close { position: absolute; top: 18px; right: 22px; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; color: #fff; background: rgba(0,0,0,.2); font-size: 28px; line-height: 1; cursor: pointer; }
+    .lightbox-close:hover { background: rgba(255,255,255,.16); }
+    body.lightbox-open { overflow: hidden; }
+    .site-footer { max-width: var(--max); margin: 0 auto; padding: 84px 62px 92px; border-top: 1px solid var(--line); }
+    .site-footer-inner { margin-left: 398px; max-width: 1065px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px 80px; align-items: end; }
+    .site-footer h2 { margin-top: 17px; color: #282828; font-family: Georgia, "Times New Roman", "Songti SC", serif; font-size: clamp(30px, 3.4vw, 48px); font-weight: 400; letter-spacing: -.055em; line-height: 1.08; }
+    .portfolio-link { display: inline-flex; align-items: center; gap: 9px; padding-bottom: 3px; color: #444; font-size: 16px; text-decoration: none; border-bottom: 1px solid #777; transition: color 180ms ease-out, border-color 180ms ease-out; }
+    .portfolio-link:hover { color: var(--blue); border-color: var(--blue); }
+    .footer-note { grid-column: 1 / -1; max-width: 760px; color: #8b8b8b; font-size: 13px; line-height: 1.7; }
+    .placeholder-copy { position: relative; z-index: 1; color: #9a9a9a; text-align: center; font-size: 13px; }
+    .placeholder-copy strong { display: block; margin-bottom: 6px; color: #6e6e6e; font-size: 17px; font-weight: 500; }
+    .caption { margin-top: 12px; color: #a5a5a5; text-transform: none; letter-spacing: 0; }
+
+    .browser-placeholder {
+      position: absolute;
+      inset: 28px 42px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 12px 35px rgba(0,0,0,.07);
+    }
+    .browser-top { height: 34px; display: flex; align-items: center; gap: 6px; padding: 0 13px; border-bottom: 1px solid #eee; background: #fafafa; }
+    .browser-top i { width: 8px; height: 8px; border-radius: 50%; background: #d9d9d9; }
+    .browser-top i:first-child { background: #ff6b6b; }
+    .browser-top i:nth-child(2) { background: #ffc34d; }
+    .browser-top i:nth-child(3) { background: #4bc876; }
+    .browser-body { display: grid; grid-template-columns: 74px 1fr; height: calc(100% - 34px); }
+    .browser-side { padding: 25px 18px; border-right: 1px solid #eee; }
+    .browser-side span { display: block; width: 25px; height: 25px; margin-bottom: 18px; border-radius: 6px; background: #eef0f3; }
+    .browser-side span:nth-child(3) { background: #e8f0ff; }
+    .browser-main { padding: 28px 36px; }
+    .browser-title { width: 46%; height: 17px; margin-bottom: 24px; border-radius: 4px; background: #e6e6e6; }
+    .browser-line { height: 11px; margin: 12px 0; border-radius: 4px; background: #f0f0f0; }
+    .browser-line.short { width: 68%; }
+    .browser-card { height: 132px; margin-top: 28px; border-radius: 10px; background: #f3f4f5; }
+
+    .section { padding: 84px 0 108px; scroll-margin-top: 100px; }
+    .content > .section:first-child { padding-top: 0; }
+    .section + .section { border-top: 0; }
+    .section-heading { max-width: 890px; }
+    .section-heading h2 {
+      margin-top: 19px;
+      color: #282828;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-size: clamp(37px, 4vw, 57px);
+      font-weight: 400;
+      letter-spacing: -.055em;
+      line-height: 1.08;
+      text-wrap: balance;
+    }
+    .subsection-title {
+      margin-top: 35px;
+      color: #303030;
+      font-family: inherit;
+      font-size: clamp(26px, 2.4vw, 34px);
+      font-weight: 400;
+      letter-spacing: -.045em;
+      line-height: 1.15;
+    }
+    .market-title { margin-top: 66px; }
+    .section-heading p { max-width: 960px; margin-top: 26px; color: #424242; font-size: 19px; line-height: 1.7; letter-spacing: -.02em; }
+    .section-heading p + p { margin-top: 17px; }
+    .strategy-list { max-width: 960px; margin: 27px 0 0; padding-left: 1.25em; color: #424242; font-size: 19px; line-height: 1.7; letter-spacing: -.02em; }
+    .strategy-list li + li { margin-top: 10px; }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 42px;
+      margin-top: 48px;
+      padding: 27px 0 29px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .metric-number { margin-top: 9px; color: #323232; font-family: inherit; font-size: 42px; line-height: 1; letter-spacing: -.055em; }
+    .metric-copy { max-width: 220px; margin-top: 10px; color: #777; font-size: 13px; line-height: 1.5; }
+    .comparison-table-wrap { margin-top: 48px; overflow-x: auto; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .comparison-table { width: 100%; min-width: 820px; border-collapse: collapse; table-layout: fixed; }
+    .comparison-table th,
+    .comparison-table td { padding: 18px 18px 21px 0; vertical-align: top; border-bottom: 1px solid var(--line); color: #444; font-size: 14px; line-height: 1.7; text-align: left; }
+    .comparison-table thead th { padding-top: 16px; padding-bottom: 13px; color: #262626; font-size: 16px; font-weight: 600; line-height: 1.35; white-space: nowrap; }
+    .comparison-table tbody th { color: #282828; font-size: 16px; font-weight: 600; }
+    .comparison-table th:nth-child(1) { width: 13%; }
+    .comparison-table th:nth-child(2) { width: 17%; }
+    .comparison-table th:nth-child(3) { width: 24%; }
+    .comparison-table th:nth-child(4) { width: 22%; }
+    .comparison-table th:nth-child(5) { width: 24%; padding-right: 0; }
+    .comparison-table tbody tr:last-child th,
+    .comparison-table tbody tr:last-child td { border-bottom: 0; }
+    .market-context { margin-top: 25px; }
+    .market-context > p { max-width: 960px; color: #424242; font-size: 19px; line-height: 1.75; letter-spacing: -.02em; }
+    .market-data { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 35px; padding: 25px 0 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .market-data-item span { display: block; color: var(--muted); font-size: 12px; line-height: 1.35; letter-spacing: .04em; }
+    .market-data-item strong { display: block; margin-top: 9px; color: #323232; font-family: inherit; font-size: 31px; font-weight: 400; line-height: 1; letter-spacing: -.055em; }
+    .split-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 65px; margin-top: 45px; }
+    .split-copy p { color: #444; font-size: 17px; line-height: 1.85; }
+    .pull-quote { margin-top: 44px; padding: 22px 0 22px 22px; border-left: 2px solid var(--ink); color: #4d4d4d; font-family: inherit; font-size: 25px; line-height: 1.45; letter-spacing: -.04em; }
+
+    .triple-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 46px; margin-top: 48px; }
+    .list-item { padding-top: 18px; border-top: 1px solid var(--ink); }
+    .list-item h3 { margin-top: 27px; color: #303030; font-size: 21px; font-weight: 500; letter-spacing: -.04em; }
+    .list-item p { margin-top: 10px; color: #777; font-size: 14px; line-height: 1.75; }
+    .appendix { margin-top: 62px; }
+    .appendix-title { margin-top: 11px; color: #777; font-size: 15px; font-weight: 400; letter-spacing: .01em; line-height: 1.5; }
+    .user-analysis-wrap { margin-top: 28px; overflow-x: auto; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .user-analysis { width: 100%; min-width: 820px; border-collapse: collapse; table-layout: fixed; }
+    .user-analysis th,
+    .user-analysis td { padding: 16px 20px 18px 0; vertical-align: top; border-bottom: 1px solid var(--line); color: #444; font-size: 14px; line-height: 1.65; text-align: left; }
+    .user-analysis thead th { padding-top: 15px; padding-bottom: 13px; color: #262626; font-size: 16px; font-weight: 600; line-height: 1.35; white-space: nowrap; }
+    .user-analysis tbody th { color: #282828; font-size: 16px; font-weight: 600; }
+    .user-analysis th:nth-child(1) { width: 24%; }
+    .user-analysis th:nth-child(2) { width: 43%; }
+    .user-analysis th:nth-child(3) { width: 33%; padding-right: 0; }
+    .user-analysis tbody tr:last-child th,
+    .user-analysis tbody tr:last-child td { border-bottom: 0; }
+    .insight-panel { margin-top: 66px; padding: 28px 0 0; border-top: 1px solid var(--ink); }
+    .insight-title { max-width: 800px; margin-top: 15px; color: #303030; font-size: clamp(25px, 2.5vw, 34px); font-weight: 500; letter-spacing: -.045em; line-height: 1.25; }
+    .insight-list { margin-top: 31px; border-top: 1px solid var(--ink); }
+    .insight-item { display: grid; grid-template-columns: 39px 1fr; gap: 14px; padding: 18px 0 20px; border-bottom: 1px solid var(--line); }
+    .insight-item span { color: #999; font-size: 12px; line-height: 1.6; }
+    .insight-item p { color: #555; font-size: 16px; line-height: 1.7; }
+    .goal-copy { max-width: 960px; margin-top: 25px; color: #424242; font-size: 19px; line-height: 1.75; letter-spacing: -.02em; }
+
+    .flow { margin-top: 48px; padding: 28px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .flow-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .flow-step { position: relative; min-height: 125px; padding: 0 27px 0 0; }
+    .flow-step + .flow-step { padding-left: 27px; border-left: 1px solid var(--line); }
+    .flow-step:not(:last-child)::after { content: "→"; position: absolute; top: 31px; right: -8px; z-index: 1; color: #9d9d9d; background: #fff; font-size: 15px; }
+    .flow-step strong { display: block; margin-top: 14px; font-size: 17px; font-weight: 500; }
+    .flow-step p { margin-top: 8px; color: #777; font-size: 13px; line-height: 1.55; }
+
+    .solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 47px; }
+    .solution-card { overflow: hidden; border-radius: 12px; background: #f1f1f1; }
+    .solution-card .image-placeholder { min-height: 330px; border-radius: 0; background: #eaeaea; }
+    .solution-card-body { padding: 22px 24px 25px; background: #fff; }
+    .solution-card-body h3 { margin-top: 13px; font-size: 20px; font-weight: 500; letter-spacing: -.04em; }
+    .solution-card-body p { margin-top: 8px; color: #777; font-size: 14px; line-height: 1.7; }
+    .demo-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 23px; color: #555; font-size: 14px; text-decoration: none; border-bottom: 1px solid #777; transition: color 180ms ease-out, border-color 180ms ease-out; }
+    .demo-link:hover { color: var(--blue); border-color: var(--blue); }
+    .outcome-row { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; margin-top: 56px; padding-top: 27px; border-top: 1px solid var(--line); }
+    .outcome-row h3 { margin-top: 13px; font-family: inherit; font-size: 28px; font-weight: 400; letter-spacing: -.05em; }
+    .outcome-row p { margin-top: 9px; color: #777; font-size: 14px; line-height: 1.75; }
+
+    .thinking-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 50px; margin-top: 47px; }
+    .thinking-item { padding: 22px 0 28px; border-top: 1px solid var(--line); }
+    .thinking-item h3 { margin-top: 12px; font-size: 20px; font-weight: 500; letter-spacing: -.04em; }
+    .thinking-item p { margin-top: 8px; color: #777; font-size: 14px; line-height: 1.75; }
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity 180ms ease-out, transform 180ms ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 80ms; }
+    .delay-2 { transition-delay: 150ms; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+    @media (max-width: 1020px) {
+      .site-hero { padding: 70px 24px 64px; grid-template-columns: 190px minmax(0, 1fr); gap: 65px; }
+      .site-footer { padding: 70px 24px 76px; }
+      .site-footer-inner { margin-left: 255px; }
+      .page { padding: 80px 24px 0; grid-template-columns: 190px minmax(0, 1fr); gap: 65px; }
+      .toc a { font-size: 14px; }
+      .hero h1 { font-size: clamp(45px, 6.8vw, 64px); }
+    }
+    @media (max-width: 760px) {
+      .site-hero { display: block; padding: 64px 20px 58px; }
+      .site-hero-inner { max-width: none; }
+      .site-hero h1 { font-size: clamp(46px, 13vw, 68px); }
+      .site-hero-author { margin-top: 22px; font-size: 18px; }
+      .site-hero-meta { margin-top: 30px; }
+      .page { display: block; padding: 64px 20px 0; }
+      .toc { display: none; }
+      .hero { padding-bottom: 65px; }
+      .hero h1 { font-size: clamp(43px, 12vw, 60px); }
+      .hero-intro { font-size: 17px; }
+      .meta-grid, .metric-row, .split-copy, .solution-grid, .outcome-row, .thinking-list { grid-template-columns: 1fr; gap: 0; }
+      .meta-grid { gap: 23px; }
+      .metric-row { gap: 24px; padding: 24px 0; }
+      .metric-copy { max-width: 100%; }
+      .split-copy { margin-top: 31px; }
+      .split-copy p + p { margin-top: 17px; }
+      .triple-list { grid-template-columns: 1fr; gap: 28px; }
+      .market-data { grid-template-columns: 1fr 1fr; gap: 22px 18px; }
+      .market-data-item strong { font-size: 27px; }
+      .appendix { margin-top: 48px; }
+      .appendix-title { font-size: 14px; }
+      .insight-panel { margin-top: 48px; }
+      .insight-title { font-size: 26px; }
+      .insight-item { grid-template-columns: 30px 1fr; gap: 10px; }
+      .flow-track { grid-template-columns: 1fr; }
+      .flow-step, .flow-step + .flow-step { min-height: auto; padding: 20px 0; border-left: 0; border-top: 1px solid var(--line); }
+      .flow-step:first-child { border-top: 0; padding-top: 0; }
+      .flow-step:not(:last-child)::after { display: none; }
+      .image-placeholder { min-height: 280px; }
+      .browser-placeholder { inset: 18px; }
+      .browser-main { padding: 18px; }
+      .solution-card .image-placeholder { min-height: 240px; }
+      .site-footer { padding: 58px 20px 64px; }
+      .site-footer-inner { margin-left: 0; display: block; }
+      .site-footer h2 { font-size: 34px; }
+      .portfolio-link { margin-top: 26px; }
+      .footer-note { margin-top: 28px; }
+    }
+
+    /* UI refinement: editorial case study / precision product grid */
+    :root {
+      --ink: #171717;
+      --muted: #777777;
+      --soft: #b9b9b9;
+      --line: #dededc;
+      --bg: #fafaf8;
+      --paper: #ffffff;
+      --pink: #dbe5ff;
+      --blue: #356dff;
+      --max: 1440px;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --z-lightbox: 50;
+    }
+
+    ::selection { color: #fff; background: var(--blue); }
+    body { background: var(--bg); color: var(--ink); }
+    p, td, th, .footer-note, .list-item p, .thinking-item p { text-wrap: pretty; }
+    h1, h2, h3 { text-wrap: balance; }
+    .eyebrow, .label, .caption, .metric-label, .market-data-item span { font-variant-numeric: tabular-nums; }
+    a, button { transition-duration: 180ms; transition-timing-function: ease-out; }
+
+    .site-hero {
+      position: relative;
+      padding-top: 74px;
+      padding-bottom: 70px;
+      background: var(--bg);
+      border-bottom: 0;
+    }
+    .site-hero-inner { position: relative; }
+    .site-hero-inner::before {
+      content: "";
+      display: block;
+      width: 42px;
+      height: 3px;
+      margin-bottom: 24px;
+      background: var(--blue);
+    }
+    .site-hero h1 {
+      max-width: 980px;
+      margin-top: 0;
+      color: var(--ink);
+      font-size: clamp(52px, 7vw, 102px);
+      letter-spacing: -.075em;
+      line-height: .98;
+    }
+    .site-hero-author { margin-top: 28px; color: var(--ink); font-size: 18px; font-weight: 500; }
+    .site-hero-meta { margin-top: 34px; color: var(--muted); }
+
+    .page { padding-top: 82px; gap: 112px; }
+    .toc { top: 42px; border-left: 1px solid var(--line); }
+    .toc a { margin-bottom: 19px; color: #a0a0a0; transition: color 180ms ease-out, transform 180ms ease-out; }
+    .toc a:hover { color: var(--ink); transform: translateX(2px); }
+    .toc a::before { left: -1px; width: 3px; transition: background 180ms ease-out; }
+    .toc a.active { color: var(--ink); font-weight: 600; }
+    .toc a.active::before { background: var(--blue); }
+
+    .section { padding: 72px 0 102px; scroll-margin-top: 40px; }
+    .section-heading h2 { margin-top: 16px; font-size: clamp(42px, 4.8vw, 70px); letter-spacing: -.065em; }
+    .section-heading p, .market-context > p, .goal-copy { color: #3f3f3f; }
+    .subsection-title { margin-top: 30px; color: #202020; font-size: clamp(24px, 2.1vw, 31px); letter-spacing: -.03em; }
+    .market-title { margin-top: 58px; }
+    .section-heading .eyebrow { display: inline-flex; align-items: center; gap: 10px; }
+    .section-heading .eyebrow::before { content: ""; width: 18px; height: 1px; background: var(--blue); }
+
+    .comparison-table-wrap, .user-analysis-wrap { border-top-color: var(--ink); }
+    .comparison-table th, .comparison-table td, .user-analysis th, .user-analysis td { border-bottom-color: var(--line); }
+    .comparison-table thead th, .user-analysis thead th { color: var(--ink); }
+    .comparison-table tbody th, .user-analysis tbody th { color: #222; }
+    .market-data { border-top-color: var(--ink); border-bottom-color: var(--line); }
+    .market-data-item strong, .metric-number { font-variant-numeric: tabular-nums; color: var(--ink); }
+
+    .triple-list { gap: 34px; }
+    .list-item { border-top-color: var(--ink); }
+    .list-item h3, .thinking-item h3 { color: var(--ink); }
+    .appendix { margin-top: 58px; }
+    .appendix-title { color: var(--muted); }
+    .insight-panel { border-top: 0; padding-top: 0; }
+    .insight-title { color: var(--ink); }
+    .insight-list { border-top-color: var(--ink); }
+
+    .strategy-list { color: #383838; }
+    .strategy-list li::marker { color: var(--blue); }
+    .image-figure { margin-top: 50px; }
+    .case-image {
+      border: 1px solid #d7d7d5;
+      border-radius: 9px;
+      background: var(--paper);
+      box-shadow: 0 12px 38px rgba(20, 20, 20, .07);
+      transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+    }
+    .case-image:hover { transform: translateY(-3px); box-shadow: none; }
+    .caption { margin-top: 14px; }
+
+    .image-placeholder::after { display: none; }
+    .browser-card { background: #f3f4f5; }
+    .highlight { background: var(--pink); }
+
+    .reveal { transform: translateY(12px); transition: opacity 180ms ease-out, transform 180ms ease-out; }
+    .delay-1 { transition-delay: 45ms; }
+    .delay-2 { transition-delay: 90ms; }
+
+    .lightbox { z-index: var(--z-lightbox); padding: 22px; transition: opacity 180ms ease-out, visibility 180ms ease-out; }
+    .lightbox img { border: 1px solid rgba(255,255,255,.18); border-radius: 8px; }
+    .lightbox-close { width: 40px; height: 40px; top: 16px; right: 18px; border-radius: 8px; font-size: 24px; transition: background 180ms ease-out, border-color 180ms ease-out; }
+
+    .site-footer {
+      padding-top: 76px;
+      padding-bottom: 86px;
+      background: #F5F5F5;
+      border-top: 0;
+    }
+    .site-footer h2 { color: var(--ink); }
+    .site-footer-inner > div .portfolio-link { margin-top: 20px; }
+    .portfolio-link { color: var(--ink); border-color: var(--ink); }
+    .portfolio-link:hover { color: var(--blue); border-color: var(--blue); }
+    .portfolio-link span { display: inline-block; transition: transform 180ms ease-out; }
+    .portfolio-link:hover span { transform: translate(3px, -3px); }
+    .footer-note { color: #767676; }
+
+    @media (max-width: 1020px) {
+      .site-hero { padding-top: 62px; padding-bottom: 60px; }
+      .page { padding-top: 66px; gap: 65px; }
+    }
+    @media (max-width: 760px) {
+      .site-hero { padding-top: 54px; padding-bottom: 52px; }
+      .site-hero-inner::before { margin-bottom: 20px; }
+      .site-hero h1 { font-size: clamp(48px, 14vw, 72px); }
+      .page { padding-top: 52px; }
+      .section { padding: 58px 0 76px; }
+      .section-heading h2 { font-size: clamp(40px, 12vw, 56px); }
+      .site-footer { padding-top: 56px; padding-bottom: 62px; }
+      .site-footer-inner > div .portfolio-link { margin-top: 24px; }
+    }
+
+    /* Typography pass: Agentation-inspired documentation rhythm */
+    :root {
+      --text-meta: 12px;
+      --text-caption: 13px;
+      --text-small: 14px;
+      --text-body: 16px;
+      --text-lead: 18px;
+      --text-subhead: 25px;
+      --text-title: clamp(40px, 4.4vw, 64px);
+      --text-display: clamp(50px, 7vw, 96px);
+    }
+
+    body,
+    button,
+    a,
+    input,
+    textarea,
+    select {
+      font-family: "PingFang SC", "PingFang TC", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    body { font-size: var(--text-body); line-height: 1.68; color: #242424; }
+    .site-hero h1,
+    .hero h1,
+    .section-heading h2,
+    .site-footer h2 {
+      font-family: inherit;
+      font-weight: 600;
+      line-height: 1.08;
+    }
+    .site-hero h1 { font-size: var(--text-display); }
+    .site-hero-author { font-size: var(--text-lead); line-height: 1.5; }
+    .site-hero-meta { font-size: 11px; line-height: 1.4; }
+    .eyebrow,
+    .label,
+    .caption,
+    .metric-label,
+    .market-data-item span { font-size: var(--text-meta); line-height: 1.4; }
+
+    .section { padding-top: 78px; padding-bottom: 108px; }
+    .section-heading h2 { font-size: var(--text-title); }
+    .section-heading p,
+    .market-context > p,
+    .goal-copy { max-width: 800px; font-size: var(--text-lead); line-height: 1.82; color: #414141; }
+    .subsection-title { font-size: var(--text-subhead); line-height: 1.35; font-weight: 600; }
+    .strategy-list { font-size: var(--text-lead); line-height: 1.82; }
+    .comparison-table th,
+    .comparison-table td,
+    .user-analysis th,
+    .user-analysis td { font-size: var(--text-small); line-height: 1.78; }
+    .comparison-table thead th,
+    .user-analysis thead th { font-size: var(--text-body); line-height: 1.45; }
+    .comparison-table tbody th,
+    .user-analysis tbody th { font-size: var(--text-body); line-height: 1.55; }
+    .market-data-item strong { font-size: 30px; line-height: 1.1; }
+    .list-item h3,
+    .thinking-item h3 { font-size: 20px; line-height: 1.45; font-weight: 600; }
+    .list-item p,
+    .thinking-item p,
+    .metric-copy,
+    .outcome-row p { font-size: var(--text-small); line-height: 1.78; }
+    .appendix-title { font-size: var(--text-small); line-height: 1.6; }
+    .insight-title { font-size: clamp(24px, 2.4vw, 32px); line-height: 1.42; font-weight: 600; }
+    .insight-item p { font-size: var(--text-body); line-height: 1.78; }
+    .flow-step strong { font-size: var(--text-body); line-height: 1.5; }
+    .flow-step p { font-size: var(--text-small); line-height: 1.7; }
+    .caption { color: #8c8c8c; }
+
+    .meta-grid { gap: 32px; margin-top: 42px; padding-top: 26px; }
+    .meta-value { margin-top: 9px; font-size: var(--text-body); line-height: 1.55; }
+    .comparison-table-wrap { margin-top: 42px; }
+    .market-title { margin-top: 56px; }
+    .market-context { margin-top: 22px; }
+    .market-data { gap: 24px; margin-top: 30px; padding: 23px 0 26px; }
+    .triple-list { margin-top: 42px; }
+    .appendix { margin-top: 54px; }
+    .user-analysis-wrap { margin-top: 23px; }
+    .insight-panel { margin-top: 58px; }
+    .thinking-list { margin-top: 40px; }
+    .thinking-item { padding: 20px 0 25px; }
+    .image-figure { margin-top: 44px; }
+    .footer-note { font-size: var(--text-caption); line-height: 1.75; }
+
+    @media (max-width: 760px) {
+      body { font-size: 15px; line-height: 1.7; }
+      .site-hero h1 { font-size: clamp(46px, 14vw, 72px); }
+      .section { padding-top: 58px; padding-bottom: 78px; }
+      .section-heading h2 { font-size: clamp(38px, 12vw, 56px); }
+      .section-heading p,
+      .market-context > p,
+      .goal-copy,
+      .strategy-list { font-size: 17px; line-height: 1.82; }
+      .subsection-title { font-size: 23px; }
+      .market-data-item strong { font-size: 26px; }
+      .image-figure { margin-top: 36px; }
+    }
+
+    /* Annotation pass: local hierarchy and market data treatment */
+    main#top.page { background-color: #FFFFFF; }
+    .site-hero .eyebrow { min-height: 26px; line-height: 26px; }
+    .site-hero h1 { font-size: 48px; padding-top: 4px; font-weight: 500; }
+    .section-heading h2 { font-weight: 500; }
+    .section#context .section-heading > p { margin-top: 16px; font-size: 14px; line-height: 1.8; opacity: .8; }
+    .section#context .section-heading > h3.subsection-title,
+    .section#context > h3.subsection-title { font-size: 20px; line-height: 1.4; font-weight: 500; opacity: .9; }
+    .section#context .market-context > p { margin-top: 16px; font-size: 14px; line-height: 1.8; opacity: .8; }
+    .section#context > p.goal-copy { margin-top: 16px; font-size: 14px; line-height: 1.8; opacity: .8; }
+    .market-data-item strong { font-family: Georgia, "Times New Roman", serif; font-size: 30px; line-height: 1.1; font-weight: 400; }
+    .market-data-item small { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.3; }
+
+    @media (max-width: 760px) {
+      .site-hero h1 { font-size: 48px; }
+    }
+
+    /* Annotation pass: English labels, table hierarchy, and section title parity */
+    .eyebrow,
+    .label,
+    .caption,
+    .metric-label,
+    .site-hero-meta {
+      font-family: system-ui, sans-serif;
+      opacity: .7;
+    }
+    .comparison-table-wrap {
+      border-top-color: rgba(23, 23, 23, .5);
+      border-bottom-color: rgba(23, 23, 23, .5);
+    }
+    .comparison-table thead th {
+      font-size: 14px;
+      opacity: .9;
+      border-bottom-color: rgba(23, 23, 23, .5);
+    }
+    .comparison-table tbody th {
+      font-size: 14px;
+      font-weight: 400;
+      opacity: .8;
+    }
+    #context-title,
+    #problem-title {
+      font-size: var(--text-title);
+      font-weight: 500;
+      line-height: 1.08;
+    }
+
+    /* Annotation pass: unify spacing, borders, and problem hierarchy */
+    .section {
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+    #problem.section {
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+
+    .section-heading .eyebrow {
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: .04em;
+      opacity: .7;
+    }
+
+    .comparison-table-wrap,
+    .user-analysis-wrap {
+      margin-top: 32px;
+    }
+
+    .comparison-table-wrap,
+    .user-analysis-wrap {
+      border-top-color: var(--line);
+      border-bottom-color: var(--line);
+    }
+    .comparison-table th,
+    .comparison-table td,
+    .comparison-table thead th,
+    .user-analysis th,
+    .user-analysis td,
+    .user-analysis thead th {
+      border-bottom: 0;
+    }
+    .comparison-table tbody th,
+    .comparison-table tbody td,
+    .user-analysis tbody th,
+    .user-analysis tbody td {
+      color: #282828;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.78;
+      opacity: .7;
+    }
+    .comparison-table thead th,
+    .user-analysis thead th {
+      color: #262626;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      opacity: .9;
+    }
+
+    .market-data {
+      border-top-color: var(--line);
+      border-bottom-color: var(--line);
+    }
+
+    #problem .section-heading > p {
+      margin-top: 16px;
+      font-size: 16px;
+      line-height: 1.75;
+      opacity: .8;
+    }
+    #problem .triple-list .list-item {
+      padding-top: 18px;
+      border-top: 0;
+    }
+    #problem .triple-list .list-item h3 {
+      margin-top: 27px;
+      color: #303030;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      opacity: .9;
+    }
+    #problem .triple-list .list-item p {
+      color: #777;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.78;
+      opacity: .7;
+    }
+    #problem .user-analysis tbody th,
+    #problem .user-analysis tbody td {
+      color: #282828;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.78;
+      opacity: .7;
+    }
+
+    /* Final hierarchy pass: shared section titles and problem framing */
+    .section-heading h2 {
+      font-size: 36px;
+      height: 44px;
+      line-height: 44px;
+    }
+    .section-heading > h3.subsection-title,
+    .section#context > h3.subsection-title {
+      font-size: 20px;
+      line-height: 1.4;
+      font-weight: 500;
+      opacity: .9;
+    }
+    .strategy-list {
+      font-size: 14px;
+      line-height: 1.8;
+      opacity: .8;
+    }
+    .triple-list {
+      padding: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    #problem .triple-list .list-item {
+      min-height: 166px;
+      padding-top: 16px;
+    }
+    .insight-title {
+      margin-top: 16px;
+      font-size: 20px;
+      height: 36px;
+      line-height: 36px;
+      font-weight: 500;
+      opacity: .9;
+    }
+
+    /* Footer CTA hierarchy: the portfolio link is the single next step. */
+    .site-footer-inner { row-gap: 32px; }
+    .site-footer .portfolio-link {
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .site-footer .footer-note { margin-top: 0; }
+    @media (max-width: 760px) {
+      .site-footer .footer-note { margin-top: 32px; }
+    }
+
+    /* Final annotation pass: fixed heading scale and insight rhythm. */
+    .section-heading h2,
+    #context-title,
+    #problem-title {
+      font-size: 36px;
+    }
+    #problem .triple-list .list-item:first-child {
+      margin-top: 1px;
+      padding-right: 0;
+      padding-bottom: 16px;
+      padding-left: 0;
+    }
+    .user-analysis thead th {
+      padding-top: 16px;
+      padding-right: 16px;
+    }
+    .insight-item {
+      padding: 16px 20px 18px 0;
+    }
+    .insight-item p {
+      font-size: 14px;
+      opacity: .7;
+    }
+    .insight-item:nth-child(-n + 3) {
+      border-bottom: 0;
+    }
+
+    /* Final annotation pass: tighten the footer affordance and image treatment. */
+    .site-footer .portfolio-link {
+      border-bottom-color: #262626;
+    }
+    .site-footer .portfolio-link span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      font-size: 16px;
+      line-height: 1;
+      opacity: .6;
+    }
+    #solution.section {
+      padding-top: 120px;
+      padding-bottom: 120px;
+    }
+    .section#framework .case-image,
+    .section#solution .case-image {
+      border-width: 0;
+      border-color: #ffffff;
+      box-shadow: none;
+    }
+
+    /* Latest annotation pass: align the table rhythm and insight rows. */
+    .market-data {
+      padding-top: 24px;
+      margin-top: 32px;
+    }
+    .comparison-table thead th {
+      padding-top: 24px;
+    }
+    .comparison-table tbody tr > th {
+      padding-bottom: 24px;
+    }
+    .comparison-table tbody tr > td:nth-of-type(2) {
+      padding-bottom: 32px;
+    }
+    #problem .triple-list .list-item {
+      padding-top: 24px;
+      padding-bottom: 32px;
+    }
+    #problem .triple-list .list-item h3 {
+      margin-top: 16px;
+    }
+    .user-analysis thead th {
+      padding-top: 24px;
+    }
+    #problem .user-analysis tbody tr:last-child > * {
+      padding-bottom: 32px;
+    }
+    .insight-item p {
+      color: #282828;
+      font-size: 14px;
+      opacity: .7;
+    }
+    .insight-item:nth-child(4) {
+      border-width: 0 0 1px 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-hero" aria-labelledby="site-hero-title">
+    <div class="site-hero-inner">
+      <div class="eyebrow">Tencent Fintech / Credit card repayment</div>
+      <h1 id="site-hero-title">信用卡还款流程优化</h1>
+      <p class="site-hero-author">郭可欣</p>
+      <p class="site-hero-meta">Product experience design case study · 2026.7.21</p>
+    </div>
+  </header>
+
+  <main class="page" id="top">
+    <aside class="toc" aria-label="案例章节导航">
+      <a class="active" href="#context" data-section="context">业务理解</a>
+      <a href="#problem" data-section="problem">问题拆解</a>
+      <a href="#framework" data-section="framework">思路及框架</a>
+      <a href="#solution" data-section="solution">最终方案</a>
+    </aside>
+
+    <article class="content">
+      <section class="section" id="context" aria-labelledby="context-title">
+        <div class="section-heading reveal"><div class="eyebrow">01 / Business understanding</div><h2 id="context-title">业务理解</h2><h3 class="subsection-title">1.产品定位</h3><p>依托「我-服务-金融理财」，把信用卡还款作为生活服务的一部分，强调方便、可信和多卡管理。</p></div>
+        <div class="comparison-table-wrap reveal delay-1">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th scope="col">产品</th>
+                <th scope="col">核心定位</th>
+                <th scope="col">分期/还款处理方式</th>
+                <th scope="col">为什么这样做</th>
+                <th scope="col">核心竞争力</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">微信信用卡还款</th>
+                <td>跨银行账单管理</td>
+                <td>支持近百家银行，提供账单查询、账单分期、还款提醒、办卡等服务</td>
+                <td>解决用户“多张卡、多笔账单、容易忘记”的管理问题</td>
+                <td>微信里的跨银行还款基础设施 + 高频用户入口 + 银行协同能力</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h3 class="subsection-title market-title reveal">2.市场发展情况</h3>
+        <div class="market-context reveal delay-1">
+          <p>当前信用卡市场已经进入存量经营阶段。业务不再主要依赖发卡和拉新，而是需要从持卡用户中提升活跃度、服务渗透率和长期价值，让商业模式变得更厚。</p>
+          <div class="market-data" role="list" aria-label="信用卡卡量变化">
+            <div class="market-data-item" role="listitem"><span>2023 年末</span><strong>7.67</strong><small>亿张</small></div>
+            <div class="market-data-item" role="listitem"><span>2024 年末</span><strong>7.27</strong><small>亿张</small></div>
+            <div class="market-data-item" role="listitem"><span>2025 年末</span><strong>6.96</strong><small>亿张</small></div>
+            <div class="market-data-item" role="listitem"><span>2026 年一季度末</span><strong>6.87</strong><small>亿张</small></div>
+          </div>
+        </div>
+        <h3 class="subsection-title reveal">3.业务目标</h3>
+        <p class="goal-copy reveal delay-1">在不打断还款任务的前提下，提升持卡用户对分期方案的理解与办理转化，扩大服务渗透率，并通过多卡管理、现金流服务与银行协同，形成更长期的用户价值。</p>
+      </section>
+
+      <section class="section" id="problem" aria-labelledby="problem-title">
+        <div class="section-heading reveal"><div class="eyebrow">02 / Problem breakdown</div><h2 id="problem-title">问题拆解</h2><h3 class="subsection-title">1.不同角色视角</h3><p>用户目前来到这里的核心诉求就是「还款」，没有「分期还款」的预期。</p></div>
+        <div class="triple-list"><article class="list-item reveal"><div class="label">User</div><h3>我只想先完成还款</h3><p>用户对逾期、到账和扣款失败更敏感，对金融推荐保持谨慎。</p></article><article class="list-item reveal delay-1"><div class="label">Business</div><h3>需要扩大分期转化</h3><p>业务希望从一次性还款延展出更有价值的现金流服务与银行合作空间。</p></article><article class="list-item reveal delay-2"><div class="label">Designer</div><h3>让选择变得可解释</h3><p>设计不是把分期按钮做得更醒目，而是降低选择成本和不确定感。</p></article></div>
+        <section class="appendix reveal" aria-labelledby="appendix-title">
+          <h3 class="appendix-title" id="appendix-title">不同用户的还款心智与主要障碍</h3>
+          <div class="user-analysis-wrap">
+            <table class="user-analysis">
+              <thead>
+                <tr><th scope="col">用户类型</th><th scope="col">用户心声（设计假设）</th><th scope="col">主要障碍</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">任务型全额还款用户</th><td>“我只是来还钱的，不想被教育。”</td><td>分期推荐打断任务</td></tr>
+                <tr><th scope="row">现金流压力用户</th><td>“我可以分期，但先让我知道到底贵多少。”</td><td>只看到每期金额，看不懂总成本</td></tr>
+                <tr><th scope="row">大额消费用户</th><td>“我刚买完大件，现在才意识到本月压力。”</td><td>等到出账单才发现分期入口</td></tr>
+                <tr><th scope="row">优惠/权益敏感用户</th><td>“这个补贴是真的吗？什么时候到账？”</td><td>优惠规则复杂、到账路径不清楚</td></tr>
+                <tr><th scope="row">多卡管理用户</th><td>“我有好几张卡，哪张更适合分期？”</td><td>各银行费率、期数、规则不同</td></tr>
+                <tr><th scope="row">灵活性敏感用户</th><td>“如果下个月有钱了，提前还会不会更贵？”</td><td>各银行提前还款规则差异很大</td></tr>
+                <tr><th scope="row">资格不确定用户</th><td>“别让我等半天最后告诉我办不了。”</td><td>资格查询是黑盒等待</td></tr>
+                <tr><th scope="row">隐私谨慎用户</th><td>“AI 可以帮我算，但不能替我做决定。”</td><td>担心数据使用和自动推荐</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section class="insight-panel reveal" aria-labelledby="insight-title">
+          <h3 class="insight-title" id="insight-title">2.Insight：用户不是拒绝分期，而是拒绝不透明的分期</h3>
+          <div class="insight-list">
+            <div class="insight-item"><span>01</span><p>用户购买的不是“贷款”，而是现金流的稳定性和时间。</p></div>
+            <div class="insight-item"><span>02</span><p>分期需求最容易在大额消费和账单压力出现时被激活。</p></div>
+            <div class="insight-item"><span>03</span><p>优惠可以带来点击，但利息、提前还款和规则透明度决定信任。</p></div>
+            <div class="insight-item"><span>04</span><p>AI 的最佳角色不是销售，而是帮助用户理解、比较和规划。</p></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="framework" aria-labelledby="framework-title">
+        <div class="section-heading reveal"><div class="eyebrow">03 / Thinking & simple framework</div><h2 id="framework-title">设计思路</h2><ul class="strategy-list"><li>把“分期转化”重新定义为“还款方案选择”，避免强推分期。</li><li>降低绑卡操作门槛。</li><li>保留全额还款入口，体现用户自主权和金融产品的可信度。</li><li>用 AI 补充优惠、利率、还款计划等信息视角，辅助用户决策，让分期从营销推荐变为可解释、可比较、可控制的还款决策。</li><li>优惠、还款期数、还款计划等信息在整体流程中统一结构化展示。</li><li>将银行规则、提前结清、最终审批等风险信息前置。</li></ul></div>
+        <figure class="image-figure reveal"><img class="case-image" src="./strategy.png" alt="信用卡还款设计思路与用户流程图" loading="lazy" decoding="async" /><figcaption class="caption">图 03 · 从还款动作延展到可解释的方案选择。</figcaption></figure>
+      </section>
+
+      <section class="section" id="solution" aria-labelledby="solution-title">
+        <div class="section-heading reveal"><div class="eyebrow">04 / Final solution</div><h2 id="solution-title">最终方案</h2></div>
+        <figure class="image-figure reveal"><img class="case-image" src="./final-solution.png" alt="信用卡还款最终方案与交互流程图" loading="lazy" decoding="async" /><figcaption class="caption">图 04 · 最终方案：从账单选择、分期说明到确认完成。</figcaption></figure>
+      </section>
+
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div>
+        <div class="eyebrow">More about my work</div>
+        <a class="portfolio-link" href="https://guokexin.me/" target="_blank" rel="noreferrer" aria-label="打开郭可欣的作品集网站">访问我的网站了解更多关于我 <span>↗</span></a>
+      </div>
+      <p class="footer-note">郭可欣·产品设计师</p>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="图片预览" aria-hidden="true">
+    <button class="lightbox-close" type="button" aria-label="关闭图片预览">×</button>
+    <img src="" alt="" />
+  </div>
+
+  <script>
+    const items = [...document.querySelectorAll('.reveal')];
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -7% 0px' });
+    items.forEach(item => observer.observe(item));
+
+    const sections = [...document.querySelectorAll('.section')];
+    const links = [...document.querySelectorAll('.toc a')];
+    const sectionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) links.forEach(link => link.classList.toggle('active', link.dataset.section === entry.target.id));
+      });
+    }, { rootMargin: '-22% 0px -68% 0px', threshold: 0 });
+    sections.forEach(section => sectionObserver.observe(section));
+
+    const lightbox = document.querySelector('#lightbox');
+    const lightboxImage = lightbox.querySelector('img');
+    const lightboxClose = lightbox.querySelector('.lightbox-close');
+    const caseImages = [...document.querySelectorAll('.case-image')];
+    const closeLightbox = () => {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('lightbox-open');
+      lightboxImage.removeAttribute('src');
+    };
+    caseImages.forEach(image => image.addEventListener('click', () => {
+      lightboxImage.src = image.currentSrc || image.src;
+      lightboxImage.alt = image.alt;
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('lightbox-open');
+      lightboxClose.focus();
+    }));
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', event => {
+      if (event.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+    });
+  </script>
+</body>
+</html>

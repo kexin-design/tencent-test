@@ -1,0 +1,92 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Friendly intelligent assistant avatar</title>
+  <desc id="desc">A rounded mint assistant character wearing a headset, smiling, with a small greeting bubble.</desc>
+  <defs>
+    <radialGradient id="bgGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(315 310) rotate(90) scale(330)">
+      <stop offset="0" stop-color="#E2FFF7"/>
+      <stop offset="0.55" stop-color="#F3FFFB"/>
+      <stop offset="1" stop-color="#F8FFFC"/>
+    </radialGradient>
+    <linearGradient id="bodyFill" x1="178" y1="170" x2="472" y2="535" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0FFF9"/>
+      <stop offset="0.46" stop-color="#DDFCF2"/>
+      <stop offset="1" stop-color="#C6F6EC"/>
+    </linearGradient>
+    <linearGradient id="accentStroke" x1="118" y1="150" x2="538" y2="523" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16BFA9"/>
+      <stop offset="1" stop-color="#79E7D6"/>
+    </linearGradient>
+    <linearGradient id="headset" x1="115" y1="137" x2="535" y2="272" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#177F96"/>
+      <stop offset="0.42" stop-color="#1DBBA8"/>
+      <stop offset="1" stop-color="#16738D"/>
+    </linearGradient>
+    <linearGradient id="glassBubble" x1="456" y1="72" x2="594" y2="188" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#D8F5EF" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="footFill" x1="210" y1="528" x2="420" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#15D2BA"/>
+      <stop offset="1" stop-color="#0FB39F"/>
+    </linearGradient>
+    <filter id="softShadow" x="141" y="497" width="358" height="118" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_1"/>
+    </filter>
+    <filter id="innerLift" x="86" y="135" width="496" height="435" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dx="0" dy="8"/>
+      <feGaussianBlur stdDeviation="14"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.047 0 0 0 0 0.478 0 0 0 0 0.424 0 0 0 0.13 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+    <style>
+      .float { animation: float 5.6s cubic-bezier(.16,1,.3,1) infinite; transform-box: fill-box; transform-origin: center; }
+      @keyframes float {
+        0%, 100% { transform: translate3d(0, 0, 0); }
+        50% { transform: translate3d(0, -8px, 0); }
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="640" rx="0" fill="url(#bgGlow)"/>
+
+  <ellipse cx="320" cy="573" rx="158" ry="25" fill="#85E7D6" opacity="0.2" filter="url(#softShadow)"/>
+
+  <g class="float">
+    <g filter="url(#innerLift)">
+      <path d="M315 148C427 148 511 232 511 339C511 354 509 369 506 383C523 365 543 352 559 360C577 369 579 397 561 417L522 456C490 518 418 555 319 555C189 555 95 461 95 338C95 226 185 148 315 148Z" fill="url(#bodyFill)" stroke="url(#accentStroke)" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M148 252C186 190 246 166 314 169C385 172 448 207 482 266" stroke="#FFFFFF" stroke-opacity="0.68" stroke-width="5" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <path d="M124 253C160 170 233 125 323 125C415 125 492 174 525 258" stroke="url(#headset)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M146 223C126 232 106 252 98 277C92 297 98 316 115 319C127 321 137 314 143 300L160 258C167 240 162 226 146 223Z" fill="#18889D"/>
+      <path d="M493 226C513 235 533 255 541 280C547 300 541 319 524 322C512 324 502 317 496 303L479 261C472 243 477 229 493 226Z" fill="#18889D"/>
+      <path d="M148 222C128 231 108 251 100 276" stroke="#8AEADF" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+      <path d="M491 226C512 236 529 255 537 280" stroke="#8AEADF" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+    </g>
+
+    <g fill="#121A1D">
+      <ellipse cx="268" cy="286" rx="10" ry="13"/>
+      <ellipse cx="333" cy="286" rx="10" ry="13"/>
+    </g>
+    <path d="M245 317C261 334 282 342 304 342C327 342 349 333 363 317" stroke="#121A1D" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <path d="M221 554C221 535 236 520 256 520H266C286 520 301 535 301 554V557H221V554Z" fill="url(#footFill)"/>
+    <path d="M312 554C312 535 327 520 347 520H357C377 520 392 535 392 554V557H312V554Z" fill="url(#footFill)"/>
+    <path d="M223 551H298" stroke="#79E7D6" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <path d="M314 551H389" stroke="#79E7D6" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <g class="float">
+    <path d="M471 87C483 77 500 72 522 72H547C578 72 600 94 600 124C600 153 579 174 549 174H471C461 174 454 166 456 156L460 130C462 112 461 96 471 87Z" fill="url(#glassBubble)" stroke="#C4ECE5" stroke-width="2"/>
+    <path d="M476 90C488 82 503 79 522 79H548C571 79 591 97 592 121" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.62"/>
+    <text x="506" y="141" fill="#16849B" font-family="Outfit, Satoshi, Arial, sans-serif" font-size="47" font-weight="800" font-style="italic" letter-spacing="-2">Hi</text>
+  </g>
+</svg>

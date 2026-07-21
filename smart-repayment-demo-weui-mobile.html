@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="信用卡还款规划移动端体验设计 Demo。" />
+  <title>信用卡还款｜WeUI Demo</title>
+  <style>
+    :root {
+      --weui-green: #07c160;
+      --weui-green-deep: #06ae56;
+      --weui-blue: #576b95;
+      --weui-red: #e64340;
+      --weui-title: #191919;
+      --weui-body: #3d3d3d;
+      --weui-muted: #888;
+      --weui-hint: #b2b2b2;
+      --weui-line: #e5e5e5;
+      --weui-bg: #f7f7f7;
+      --weui-paper: #fff;
+      --weui-green-bg: #edf9f2;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #202523; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--weui-title);
+      background: var(--weui-bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+    }
+    button, input { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid rgba(7, 193, 96, .3); outline-offset: 2px; }
+    .phone-preview { position: relative; max-width: 430px; min-height: 100vh; margin: 0 auto; background: var(--weui-bg); overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 24px 80px rgba(0,0,0,.25); }
+    .page { min-height: 100vh; padding-bottom: calc(82px + var(--safe-bottom)); }
+    .amount { font-variant-numeric: tabular-nums; letter-spacing: -.035em; }
+    .is-hidden { display: none !important; }
+
+    /* WeUI navigation bar */
+    .weui-navigation-bar { height: calc(48px + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); background: var(--weui-paper); display: flex; align-items: end; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(0,0,0,.04); }
+    .weui-navigation-bar__inner { width: 100%; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; }
+    .weui-navigation-bar__side { min-width: 54px; display: flex; align-items: center; }
+    .weui-navigation-bar__side:last-child { justify-content: flex-end; }
+    .nav-icon { width: 32px; height: 32px; padding: 0; color: var(--weui-title); background: transparent; display: grid; place-items: center; }
+    .nav-icon svg { width: 21px; height: 21px; }
+    .nav-more { width: 6px; height: 6px; margin-right: 19px; border-radius: 50%; background: var(--weui-title); box-shadow: 10px 0 var(--weui-title), 20px 0 var(--weui-title); }
+    .weui-navigation-bar__title { font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+
+    /* Page head + bill */
+    .weui-page__hd { padding: 22px 16px 12px; }
+    .weui-page__title { margin: 0; font-size: 24px; line-height: 1.3; letter-spacing: -.045em; font-weight: 700; }
+    .weui-page__desc { margin: 7px 0 0; color: var(--weui-muted); font-size: 13px; line-height: 1.5; }
+    .bill-panel { padding: 20px 16px 18px; background: var(--weui-paper); border-top: 1px solid rgba(0,0,0,.03); border-bottom: 1px solid var(--weui-line); }
+    .bill-panel__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .bank-name { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; }
+    .bank-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 5px; background: #f2e5d0; color: #8b592a; font-size: 11px; font-weight: 800; }
+    .sample-tag { padding: 4px 7px; border-radius: 3px; background: #f5f5f5; color: var(--weui-muted); font-size: 10px; }
+    .bill-label { margin-top: 23px; color: var(--weui-muted); font-size: 13px; }
+    .bill-amount { margin-top: 5px; font-size: 42px; line-height: 1; font-weight: 700; }
+    .bill-amount small { margin-left: 4px; color: var(--weui-muted); font-size: 12px; letter-spacing: 0; font-weight: 400; }
+    .bill-meta { margin-top: 9px; color: var(--weui-muted); font-size: 12px; }
+    .bill-meta strong { color: var(--weui-body); font-weight: 500; }
+    .scope-note { margin-top: 16px; padding: 10px 11px; border-radius: 4px; background: var(--weui-green-bg); color: #2d6f49; font-size: 12px; line-height: 1.5; }
+
+    /* WeUI cells */
+    .weui-cells__title { margin: 0; padding: 16px 16px 8px; color: var(--weui-muted); font-size: 13px; line-height: 1.4; }
+    .weui-cells { margin: 0; background: var(--weui-paper); overflow: hidden; position: relative; }
+    .weui-cells::before, .weui-cells::after { content: ""; position: absolute; left: 16px; right: 0; height: 1px; background: var(--weui-line); transform: scaleY(.5); }
+    .weui-cells::before { top: 0; }
+    .weui-cells::after { bottom: 0; }
+    .weui-cell { min-height: 54px; padding: 13px 16px; display: flex; align-items: center; gap: 10px; position: relative; }
+    .weui-cell + .weui-cell::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--weui-line); transform: scaleY(.5); }
+    .weui-cell__hd { flex: none; }
+    .weui-cell__bd { flex: 1; min-width: 0; }
+    .weui-cell__ft { flex: none; color: var(--weui-muted); text-align: right; font-size: 13px; }
+    .weui-cell__title { font-size: 15px; line-height: 1.35; }
+    .weui-cell__desc { margin-top: 4px; color: var(--weui-muted); font-size: 12px; line-height: 1.45; }
+    .weui-cell_access { width: 100%; text-align: left; background: var(--weui-paper); cursor: pointer; transition: background-color .15s ease; }
+    .weui-cell_access:active { background: #ececec; }
+    .weui-cell_access .weui-cell__ft { padding-right: 17px; position: relative; }
+    .weui-cell_access .weui-cell__ft::after { content: ""; width: 7px; height: 7px; border-top: 1px solid #b2b2b2; border-right: 1px solid #b2b2b2; transform: rotate(45deg); position: absolute; right: 2px; top: 50%; margin-top: -4px; }
+    .weui-cells_tips { margin: 8px 16px 0; color: var(--weui-muted); font-size: 12px; line-height: 1.55; }
+
+    /* Recommendation: one compact explanation, details are on demand */
+    .recommendation { margin-top: 10px; padding: 13px 16px; background: var(--weui-paper); border-top: 1px solid var(--weui-line); border-bottom: 1px solid var(--weui-line); }
+    .recommendation__label { color: #087b43; font-size: 12px; font-weight: 600; }
+    .recommendation__copy { margin: 5px 0 0; color: var(--weui-body); font-size: 13px; line-height: 1.55; }
+    .recommendation__copy strong { color: #087b43; font-weight: 600; }
+
+    /* Plan radio rows */
+    .plan-cell { min-height: 80px; padding-top: 14px; padding-bottom: 14px; cursor: pointer; }
+    .plan-cell:active { background: #f1f1f1; }
+    .plan-cell.is-selected { background: #f7fcf8; }
+    .weui-check { position: absolute; opacity: 0; pointer-events: none; }
+    .check-mark { width: 21px; height: 21px; border: 1px solid #c9c9c9; border-radius: 50%; display: grid; place-items: center; }
+    .weui-check:checked + .check-mark { border-color: var(--weui-green); background: var(--weui-green); }
+    .weui-check:checked + .check-mark::after { content: ""; width: 6px; height: 10px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) translate(-1px, -1px); }
+    .plan-title-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .plan-title-line .weui-cell__title { font-weight: 600; }
+    .weui-badge { display: inline-flex; align-items: center; min-height: 18px; padding: 0 6px; border-radius: 3px; background: var(--weui-green); color: #fff; font-size: 10px; line-height: 1; }
+    .weui-badge.gray { background: #f0f0f0; color: #777; }
+    .plan-price { color: var(--weui-title); font-size: 17px; font-weight: 600; white-space: nowrap; }
+    .plan-price small { margin-left: 2px; color: var(--weui-muted); font-size: 11px; font-weight: 400; letter-spacing: 0; }
+    .plan-cell.is-selected .plan-price { color: #087b43; }
+
+    /* Cost preview: only the numbers needed to decide */
+    .weui-form-preview { margin-top: 10px; background: var(--weui-paper); }
+    .weui-form-preview__hd { padding: 16px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .weui-form-preview__label { color: var(--weui-muted); font-size: 13px; }
+    .weui-form-preview__value { font-size: 24px; font-weight: 600; }
+    .weui-form-preview__bd { padding: 0 16px; }
+    .weui-form-preview__item { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-top: 1px solid var(--weui-line); font-size: 13px; }
+    .weui-form-preview__item span:first-child { color: var(--weui-muted); }
+    .weui-form-preview__item span:last-child { color: var(--weui-body); text-align: right; }
+    .weui-form-preview__item .positive { color: #087b43; }
+    .weui-form-preview__ft { display: flex; margin-top: 2px; border-top: 1px solid var(--weui-line); }
+    .weui-form-preview__btn { flex: 1; min-height: 48px; color: var(--weui-blue); background: transparent; font-size: 14px; }
+    .weui-form-preview__btn + .weui-form-preview__btn { border-left: 1px solid var(--weui-line); color: var(--weui-green-deep); }
+    .weui-form-preview__btn:active { background: #ececec; }
+
+    .source-note { padding: 12px 16px 0; color: var(--weui-muted); font-size: 11px; line-height: 1.5; }
+    .status-dot { width: 7px; height: 7px; display: inline-block; margin-right: 5px; border-radius: 50%; background: var(--weui-green); }
+    .status-line { padding: 9px 16px 0; color: var(--weui-muted); font-size: 12px; line-height: 1.5; }
+    .status-line.error { color: var(--weui-red); }
+    .status-line.error .status-dot { background: var(--weui-red); }
+
+    /* WeUI buttons */
+    .weui-btn { width: 100%; min-height: 47px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 17px; transition: background-color .15s ease, opacity .15s ease, transform .12s ease; }
+    .weui-btn:active { transform: scale(.99); }
+    .weui-btn_primary { color: #fff; background: var(--weui-green); }
+    .weui-btn_primary:active { background: var(--weui-green-deep); }
+    .weui-btn:disabled { opacity: .5; pointer-events: none; }
+    .bottom-bar { position: fixed; right: 0; bottom: 0; left: 0; z-index: 9; padding: 9px 16px calc(9px + var(--safe-bottom)); background: rgba(255,255,255,.97); border-top: 1px solid var(--weui-line); box-shadow: 0 -3px 12px rgba(0,0,0,.05); }
+    .bottom-bar__inner { max-width: 430px; margin: 0 auto; display: flex; align-items: center; gap: 11px; }
+    .bottom-bar__summary { min-width: 0; flex: 1; }
+    .bottom-bar__label { color: var(--weui-muted); font-size: 11px; }
+    .bottom-bar__value { margin-top: 3px; overflow: hidden; color: var(--weui-title); font-size: 13px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+    .bottom-bar .weui-btn { width: 136px; min-height: 42px; font-size: 15px; }
+
+    /* WeUI dialog, action sheet, toast, msg */
+    .weui-mask { position: fixed; inset: 0; z-index: 19; background: rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .weui-mask.is-visible { opacity: 1; pointer-events: auto; }
+    .weui-dialog { position: fixed; top: 50%; left: 50%; z-index: 20; width: min(320px, calc(100% - 32px)); border-radius: 4px; background: var(--weui-paper); overflow: hidden; transform: translate(-50%, -48%) scale(.98); opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+    .weui-dialog.is-visible { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+    .weui-dialog__hd { padding: 22px 24px 10px; text-align: center; }
+    .weui-dialog__title { font-size: 17px; font-weight: 600; }
+    .weui-dialog__bd { padding: 0 24px 18px; color: var(--weui-body); font-size: 14px; line-height: 1.6; }
+    .dialog-summary { margin: 11px 0 2px; padding: 9px 11px; border-radius: 3px; background: #f7f7f7; }
+    .dialog-row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; }
+    .dialog-row span:first-child { color: var(--weui-muted); }
+    .dialog-row strong { font-weight: 600; }
+    .weui-agree { margin-top: 12px; display: flex; gap: 7px; color: var(--weui-muted); font-size: 12px; line-height: 1.5; }
+    .weui-agree input { margin-top: 2px; accent-color: var(--weui-green); }
+    .weui-dialog__ft { display: flex; border-top: 1px solid var(--weui-line); }
+    .weui-dialog__btn { flex: 1; min-height: 50px; color: var(--weui-blue); background: transparent; font-size: 16px; }
+    .weui-dialog__btn + .weui-dialog__btn { border-left: 1px solid var(--weui-line); color: var(--weui-green-deep); font-weight: 600; }
+    .weui-dialog__btn:active { background: #ececec; }
+    .weui-actionsheet { position: fixed; right: 0; bottom: 0; left: 0; z-index: 21; transform: translateY(100%); transition: transform .25s ease; }
+    .weui-actionsheet.is-visible { transform: translateY(0); }
+    .weui-actionsheet__menu, .weui-actionsheet__action { max-width: 430px; margin: 0 auto; background: var(--weui-paper); }
+    .weui-actionsheet__menu { border-radius: 4px 4px 0 0; overflow: hidden; }
+    .weui-actionsheet__cell { width: 100%; min-height: 51px; padding: 0 16px; display: flex; align-items: center; justify-content: center; color: var(--weui-title); background: var(--weui-paper); border-bottom: 1px solid var(--weui-line); font-size: 15px; }
+    .weui-actionsheet__cell.title { display: block; padding-top: 16px; padding-bottom: 12px; color: var(--weui-muted); font-size: 13px; line-height: 1.5; text-align: left; }
+    .weui-actionsheet__cell:active { background: #ececec; }
+    .weui-actionsheet__action { margin-top: 8px; padding-bottom: var(--safe-bottom); border-radius: 4px 4px 0 0; }
+    .weui-actionsheet__action .weui-actionsheet__cell { border: 0; color: var(--weui-blue); }
+    .weui-toast { position: fixed; top: 50%; left: 50%; z-index: 30; min-width: 112px; padding: 15px 14px; border-radius: 4px; background: rgba(17,17,17,.86); color: #fff; text-align: center; transform: translate(-50%, -50%) scale(.95); opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .weui-toast.is-visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .weui-toast__icon { height: 24px; margin-bottom: 7px; display: grid; place-items: center; }
+    .weui-toast__icon svg { width: 26px; height: 26px; }
+    .weui-toast__content { display: block; font-size: 13px; line-height: 1.4; }
+    .weui-msg { display: none; min-height: calc(100vh - 48px); padding: 72px 30px 40px; background: var(--weui-bg); text-align: center; }
+    .weui-msg.is-visible { display: block; }
+    .weui-msg__icon { width: 62px; height: 62px; margin: 0 auto 18px; border-radius: 50%; background: var(--weui-green); color: #fff; display: grid; place-items: center; }
+    .weui-msg__icon svg { width: 33px; height: 33px; }
+    .weui-msg__title { margin: 0; font-size: 22px; font-weight: 600; }
+    .weui-msg__desc { margin: 10px 0 0; color: var(--weui-muted); font-size: 14px; line-height: 1.65; }
+    .weui-msg__extra-area { margin-top: 30px; }
+    .skeleton { display: inline-block; width: 72px; height: 12px; border-radius: 3px; background: linear-gradient(90deg, #eee 25%, #f8f8f8 45%, #eee 65%); background-size: 300% 100%; animation: shimmer 1.1s infinite; }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    @media (min-width: 431px) {
+      body { padding: 22px 0; }
+      .phone-preview { min-height: calc(100vh - 44px); border-radius: 24px; }
+      .bottom-bar { position: absolute; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-preview">
+    <main class="page" id="mainPage">
+      <header class="weui-navigation-bar" aria-label="微信页面导航">
+        <div class="weui-navigation-bar__inner">
+          <div class="weui-navigation-bar__side"><button class="nav-icon" id="backButton" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button></div>
+          <div class="weui-navigation-bar__title">信用卡还款</div>
+          <div class="weui-navigation-bar__side"><button class="nav-icon" id="moreButton" aria-label="更多"><span class="nav-more" aria-hidden="true"></span></button></div>
+        </div>
+      </header>
+
+      <header class="weui-page__hd">
+        <h1 class="weui-page__title">这次还款，先看清再决定</h1>
+        <p class="weui-page__desc">比较月供和总成本，选择适合你的还款方式。</p>
+      </header>
+
+      <section class="bill-panel" aria-label="本期账单">
+        <div class="bill-panel__top"><span class="bank-name"><span class="bank-mark">交</span>交通银行 · 尾号 3918</span><span class="sample-tag">示例数据</span></div>
+        <div class="bill-label">本期应还</div>
+        <div class="bill-amount amount">¥2,148.25<small>人民币</small></div>
+        <div class="bill-meta">还款日 <strong>06 月 28 日</strong> · 距今天 12 天</div>
+        <div class="scope-note">本次分期仅针对本期已出账单，未出账消费不计入。</div>
+      </section>
+
+      <section class="recommendation" aria-label="智能建议">
+        <div class="recommendation__label">智能建议</div>
+        <p class="recommendation__copy" id="recommendationCopy">6 期把本月支出降到 <strong>¥374.08</strong>，成本与月供更平衡；全额还款仍是总成本最低的选项。</p>
+      </section>
+
+      <div class="weui-cells__title">选择还款安排</div>
+      <section class="weui-cells" role="radiogroup" aria-label="还款方案">
+        <label class="weui-cell plan-cell is-selected" data-plan="six">
+          <input class="weui-check" type="radio" name="plan" value="six" checked />
+          <span class="weui-cell__hd"><span class="check-mark" aria-hidden="true"></span></span>
+          <span class="weui-cell__bd"><span class="plan-title-line"><span class="weui-cell__title">6 期 · 灵活平衡</span><span class="weui-badge">推荐</span></span><span class="weui-cell__desc">月供更轻，成本可控</span></span>
+          <span class="weui-cell__ft"><span class="plan-price amount">¥374.08<small>/月</small></span></span>
+        </label>
+        <label class="weui-cell plan-cell" data-plan="full">
+          <input class="weui-check" type="radio" name="plan" value="full" />
+          <span class="weui-cell__hd"><span class="check-mark" aria-hidden="true"></span></span>
+          <span class="weui-cell__bd"><span class="plan-title-line"><span class="weui-cell__title">全额还款</span><span class="weui-badge gray">成本最低</span></span><span class="weui-cell__desc">一次结清，不产生分期费</span></span>
+          <span class="weui-cell__ft"><span class="plan-price amount">¥2,148.25<small>/次</small></span></span>
+        </label>
+        <label class="weui-cell plan-cell" data-plan="twelve">
+          <input class="weui-check" type="radio" name="plan" value="twelve" />
+          <span class="weui-cell__hd"><span class="check-mark" aria-hidden="true"></span></span>
+          <span class="weui-cell__bd"><span class="plan-title-line"><span class="weui-cell__title">12 期 · 稳住现金流</span><span class="weui-badge gray">月供最低</span></span><span class="weui-cell__desc">周期更长，总成本更高</span></span>
+          <span class="weui-cell__ft"><span class="plan-price amount">¥191.80<small>/月</small></span></span>
+        </label>
+      </section>
+
+      <section class="weui-form-preview" aria-label="当前方案成本">
+        <div class="weui-form-preview__hd"><span class="weui-form-preview__label">预计总成本</span><span class="weui-form-preview__value amount" id="totalCost">¥2,244.48</span></div>
+        <div class="weui-form-preview__bd">
+          <div class="weui-form-preview__item"><span>比全额还款多付</span><span class="amount" id="extraCost">¥96.23</span></div>
+          <div class="weui-form-preview__item"><span>预计贴息</span><span class="positive amount" id="subsidy">¥21.48</span></div>
+          <div class="weui-form-preview__item"><span>费用口径</span><span>已按贴息后示例计算</span></div>
+        </div>
+        <div class="weui-form-preview__ft"><button class="weui-form-preview__btn" id="rulesButton">费用与规则</button><button class="weui-form-preview__btn" id="whyButton">为什么推荐</button></div>
+      </section>
+
+      <div class="weui-cells__title">确认前看一眼</div>
+      <section class="weui-cells" aria-label="分期资格与账单范围">
+        <button class="weui-cell weui-cell_access" id="queryButton"><span class="weui-cell__bd"><span class="weui-cell__title">分期资格</span><span class="weui-cell__desc">交通银行官方结果</span></span><span class="weui-cell__ft" id="queryStatus">可继续申请</span></button>
+        <button class="weui-cell weui-cell_access" id="billDetailButton"><span class="weui-cell__bd"><span class="weui-cell__title">账单明细</span><span class="weui-cell__desc">本期已出账单、未出账消费</span></span><span class="weui-cell__ft">查看</span></button>
+      </section>
+      <div class="status-line" id="statusLine"><span class="status-dot" aria-hidden="true"></span>最终费用与审批结果以交通银行官方页面为准</div>
+    </main>
+
+    <section class="weui-msg" id="successPage" aria-live="polite">
+      <div class="weui-msg__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></div>
+      <h1 class="weui-msg__title">已准备好前往官方服务</h1>
+      <p class="weui-msg__desc">下一步会交给交通银行完成最终审批。这个 Demo 不会提交真实申请。</p>
+      <div class="weui-msg__extra-area"><button class="weui-btn weui-btn_primary" id="backToPage">返回方案页</button></div>
+    </section>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar"><div class="bottom-bar__inner"><div class="bottom-bar__summary"><div class="bottom-bar__label">当前选择 · 预计总成本</div><div class="bottom-bar__value"><span id="bottomPlan">6 期 · 灵活平衡</span> · <span class="amount" id="bottomTotal">¥2,244.48</span></div></div><button class="weui-btn weui-btn_primary" id="continueButton">继续确认</button></div></div>
+
+  <div class="weui-mask" id="mask"></div>
+  <section class="weui-dialog" id="confirmDialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="weui-dialog__hd"><strong class="weui-dialog__title" id="dialogTitle">确认这份还款安排</strong></div>
+    <div class="weui-dialog__bd"><p style="margin:0">下一步将前往交通银行官方服务完成申请，最终金额以银行页面为准。</p><div class="dialog-summary"><div class="dialog-row"><span>还款安排</span><strong id="dialogPlan">6 期 · 灵活平衡</strong></div><div class="dialog-row"><span>预计每月</span><strong id="dialogMonthly">¥374.08</strong></div><div class="dialog-row"><span>预计总成本</span><strong id="dialogTotal">¥2,244.48</strong></div></div><label class="weui-agree"><input type="checkbox" id="consent" /><span>我已阅读费用、贴息和提前结清规则。</span></label></div>
+    <div class="weui-dialog__ft"><button class="weui-dialog__btn" id="cancelDialog">返回修改</button><button class="weui-dialog__btn" id="confirmDialogButton" disabled>前往官方服务</button></div>
+  </section>
+
+  <div class="weui-toast" id="toast" role="status" aria-live="polite"><span class="weui-toast__icon" id="toastIcon"></span><span class="weui-toast__content" id="toastText"></span></div>
+
+  <section class="weui-actionsheet" id="infoSheet" aria-label="说明"><div class="weui-actionsheet__menu"><div class="weui-actionsheet__cell title" id="sheetTitle">费用与规则说明</div><div id="sheetItems"></div></div><div class="weui-actionsheet__action"><button class="weui-actionsheet__cell" id="closeSheet">取消</button></div></section>
+
+  <script>
+    const plans = {
+      full: { fullLabel: '全额还款', monthly: '¥2,148.25', total: '¥2,148.25', extra: '¥0', subsidy: '¥0', recommendation: '全额还款总成本最低，不产生分期费。' },
+      six: { fullLabel: '6 期 · 灵活平衡', monthly: '¥374.08', total: '¥2,244.48', extra: '¥96.23', subsidy: '¥21.48', recommendation: '6 期把本月支出降到 ¥374.08，成本与月供更平衡；全额还款仍是总成本最低的选项。' },
+      twelve: { fullLabel: '12 期 · 稳住现金流', monthly: '¥191.80', total: '¥2,301.60', extra: '¥153.35', subsidy: '¥21.48', recommendation: '12 期月供更低，但总成本比 6 期更高，请确认现金流优先级。' }
+    };
+    let selected = 'six';
+    let queryCount = 0;
+    const $ = (id) => document.getElementById(id);
+    const planCells = [...document.querySelectorAll('[data-plan]')];
+
+    function showToast(text, success = false, duration = 1400) {
+      $('toastText').textContent = text;
+      $('toastIcon').innerHTML = success ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg>' : '<span class="skeleton" style="width:24px;height:24px;border-radius:50%" aria-hidden="true"></span>';
+      $('toast').classList.add('is-visible');
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => $('toast').classList.remove('is-visible'), duration);
+    }
+
+    function selectPlan(key) {
+      selected = key;
+      const plan = plans[key];
+      planCells.forEach((cell) => {
+        const checked = cell.dataset.plan === key;
+        cell.classList.toggle('is-selected', checked);
+        cell.querySelector('input').checked = checked;
+      });
+      $('recommendationCopy').textContent = plan.recommendation;
+      $('totalCost').textContent = plan.total;
+      $('extraCost').textContent = plan.extra;
+      $('subsidy').textContent = plan.subsidy;
+      $('bottomPlan').textContent = plan.fullLabel;
+      $('bottomTotal').textContent = plan.total;
+      $('dialogPlan').textContent = plan.fullLabel;
+      $('dialogMonthly').textContent = plan.monthly;
+      $('dialogTotal').textContent = plan.total;
+    }
+
+    planCells.forEach((cell) => cell.addEventListener('click', () => selectPlan(cell.dataset.plan)));
+
+    function openDialog() { $('mask').classList.add('is-visible'); $('confirmDialog').classList.add('is-visible'); $('consent').checked = false; $('confirmDialogButton').disabled = true; }
+    function closeDialog() { $('mask').classList.remove('is-visible'); $('confirmDialog').classList.remove('is-visible'); }
+    $('continueButton').addEventListener('click', openDialog);
+    $('cancelDialog').addEventListener('click', closeDialog);
+    $('consent').addEventListener('change', (event) => { $('confirmDialogButton').disabled = !event.target.checked; });
+    $('confirmDialogButton').addEventListener('click', () => { closeDialog(); $('mainPage').classList.add('is-hidden'); $('bottomBar').classList.add('is-hidden'); $('successPage').classList.add('is-visible'); window.scrollTo(0, 0); });
+    $('backToPage').addEventListener('click', () => { $('successPage').classList.remove('is-visible'); $('mainPage').classList.remove('is-hidden'); $('bottomBar').classList.remove('is-hidden'); });
+
+    const sheetContent = {
+      rules: { title: '费用与规则说明', items: ['提前结清：不同银行的剩余手续费处理方式不同', '贴息：符合活动条件后按银行规则抵扣或返还', '最终金额：以交通银行官方页面为准'] },
+      why: { title: '为什么推荐当前方案', items: ['先看月供：判断本月现金流压力', '再看总成本：避免只关注低月供', '全额还款始终可见：不隐藏成本最低选项'] },
+      bill: { title: '账单明细', items: ['本期已出账单：¥2,136.85', '未出账消费：¥812.24，将进入下一期账单', '本次分期仅针对本期已出账单'] }
+    };
+    function openSheet(type) {
+      const content = sheetContent[type];
+      $('sheetTitle').innerHTML = content.title + '<br /><span style="font-size:12px">信息仅用于帮助你完成判断，不代表银行最终审批。</span>';
+      $('sheetItems').innerHTML = content.items.map((item) => '<div class="weui-actionsheet__cell">' + item + '</div>').join('');
+      $('mask').classList.add('is-visible');
+      $('infoSheet').classList.add('is-visible');
+    }
+    function closeSheet() { $('mask').classList.remove('is-visible'); $('infoSheet').classList.remove('is-visible'); }
+    $('rulesButton').addEventListener('click', () => openSheet('rules'));
+    $('whyButton').addEventListener('click', () => openSheet('why'));
+    $('billDetailButton').addEventListener('click', () => openSheet('bill'));
+    $('closeSheet').addEventListener('click', closeSheet);
+    $('mask').addEventListener('click', () => { closeDialog(); closeSheet(); });
+
+    $('queryButton').addEventListener('click', () => {
+      queryCount += 1;
+      $('queryStatus').innerHTML = '<span class="skeleton" aria-label="查询中"></span>';
+      $('statusLine').className = 'status-line';
+      $('statusLine').innerHTML = '<span class="status-dot" aria-hidden="true"></span>正在连接交通银行服务，请稍候';
+      showToast('正在查询资格');
+      window.setTimeout(() => {
+        if (queryCount % 2 === 0) {
+          $('queryStatus').textContent = '请重试';
+          $('statusLine').className = 'status-line error';
+          $('statusLine').innerHTML = '<span class="status-dot" aria-hidden="true"></span>查询超时，方案不会被提交';
+          showToast('查询暂时失败', false, 1500);
+        } else {
+          $('queryStatus').textContent = '可继续申请';
+          $('statusLine').className = 'status-line';
+          $('statusLine').innerHTML = '<span class="status-dot" aria-hidden="true"></span>查询完成：当前方案可继续申请';
+          showToast('查询完成', true, 1200);
+        }
+      }, 1050);
+    });
+
+    $('backButton').addEventListener('click', () => showToast('Demo 中已返回上一页', true, 1100));
+    $('moreButton').addEventListener('click', () => showToast('当前页面为体验设计 Demo', true, 1300));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeDialog(); closeSheet(); } });
+    selectPlan(selected);
+  </script>
+</body>
+</html>
