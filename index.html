@@ -449,7 +449,7 @@
     .appendix-title { color: var(--muted); }
     .insight-panel { border-top: 0; padding-top: 0; }
     .insight-title { color: var(--ink); }
-    .insight-list { border-top-color: var(--ink); }
+    .insight-list { border-top: 1px solid var(--line); }
 
     .strategy-list { color: #383838; }
     .strategy-list li::marker { color: var(--blue); }
@@ -820,7 +820,7 @@
 
     /* Final annotation pass: tighten the footer affordance and image treatment. */
     .site-footer .portfolio-link {
-      border-bottom-color: #262626;
+      border-bottom-color: var(--line);
     }
     .site-footer .portfolio-link span {
       display: inline-flex;
@@ -915,9 +915,12 @@
       .content > .section:first-child {
         padding-top: 0;
       }
+      #framework.section {
+        padding-bottom: 36px;
+      }
       #solution.section {
         padding-top: 48px;
-        padding-bottom: 56px;
+        padding-bottom: 120px;
       }
       .section-heading h2,
       #context-title,
@@ -987,6 +990,12 @@
       .insight-item {
         padding-top: 14px;
         padding-bottom: 16px;
+      }
+      .insight-item:first-child {
+        padding-top: 24px;
+      }
+      .insight-item:last-child {
+        padding-bottom: 24px;
       }
       .image-figure {
         margin-top: 28px;
