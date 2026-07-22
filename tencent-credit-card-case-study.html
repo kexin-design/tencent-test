@@ -877,6 +877,137 @@
     .insight-item:nth-child(4) {
       border-width: 0 0 1px 0;
     }
+
+    /* Mobile polish: keep the reading flow direct and avoid scroll-reveal blanks. */
+    @media (max-width: 760px) {
+      .site-hero {
+        padding-top: 34px;
+        padding-bottom: 30px;
+      }
+      .site-hero-inner::before {
+        width: 34px;
+        height: 2px;
+        margin-bottom: 14px;
+      }
+      .site-hero h1 {
+        max-width: 7em;
+        padding-top: 0;
+        font-size: 40px;
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+      .site-hero-author {
+        margin-top: 16px;
+        font-size: 15px;
+      }
+      .site-hero-meta {
+        margin-top: 12px;
+        line-height: 1.45;
+      }
+      .page {
+        padding-top: 34px;
+      }
+      .section,
+      #problem.section {
+        padding-top: 44px;
+        padding-bottom: 48px;
+      }
+      .content > .section:first-child {
+        padding-top: 0;
+      }
+      #solution.section {
+        padding-top: 48px;
+        padding-bottom: 56px;
+      }
+      .section-heading h2,
+      #context-title,
+      #problem-title {
+        height: auto;
+        min-height: 0;
+        font-size: 32px;
+        line-height: 1.18;
+        letter-spacing: 0;
+      }
+      .section-heading .eyebrow {
+        display: block;
+        line-height: 1.35;
+      }
+      .section-heading .eyebrow::before {
+        display: none;
+      }
+      .section-heading > h3.subsection-title,
+      .section#context > h3.subsection-title,
+      .subsection-title {
+        margin-top: 18px;
+        font-size: 18px;
+        line-height: 1.42;
+      }
+      .section-heading p,
+      .market-context > p,
+      .goal-copy,
+      .strategy-list {
+        margin-top: 12px;
+        font-size: 14px;
+        line-height: 1.72;
+      }
+      .market-title {
+        margin-top: 34px;
+      }
+      .market-context {
+        margin-top: 16px;
+      }
+      .market-data {
+        margin-top: 20px;
+        padding-top: 18px;
+        padding-bottom: 20px;
+      }
+      .comparison-table-wrap,
+      .user-analysis-wrap {
+        margin-top: 22px;
+      }
+      .triple-list {
+        margin-top: 28px;
+      }
+      #problem .triple-list .list-item {
+        min-height: auto;
+        padding-top: 18px;
+        padding-bottom: 20px;
+      }
+      .appendix,
+      .insight-panel {
+        margin-top: 36px;
+      }
+      .insight-title {
+        height: auto;
+        min-height: 0;
+        margin-top: 12px;
+        font-size: 18px;
+        line-height: 1.45;
+      }
+      .insight-item {
+        padding-top: 14px;
+        padding-bottom: 16px;
+      }
+      .image-figure {
+        margin-top: 28px;
+      }
+      .site-footer {
+        padding-top: 44px;
+        padding-bottom: 48px;
+      }
+      .site-footer .portfolio-link {
+        font-size: 22px;
+        line-height: 1.35;
+      }
+      .site-footer .footer-note {
+        margin-top: 24px;
+      }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
   </style>
 </head>
 <body>
